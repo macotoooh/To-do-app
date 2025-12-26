@@ -1,9 +1,10 @@
-import type { Route } from "./+types";
+import { redirect } from "react-router";
+import type { Route } from "../+types/root";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "To do App" }];
 }
 
-export default function Home() {
-  return <>test</>;
+export function loader() {
+  return redirect("/todos");
 }
