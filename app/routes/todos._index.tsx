@@ -1,5 +1,5 @@
 import { Link, useRouteLoaderData } from "react-router";
-import { AppStatusLabel } from "stories/statu-label";
+import { AppStatusLabel } from "stories/status-label";
 import type { TaskDTO } from "~/types/tasks";
 import { formatDate } from "~/utils/format-date";
 

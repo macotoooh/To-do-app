@@ -1,12 +1,12 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { AppStatusLabel } from ".";
-import { STATUS_VARIANT } from "./constants";
+import { TASK_STATUS } from "~/constants/tasks";
 
 const meta: Meta<typeof AppStatusLabel> = {
   component: AppStatusLabel,
   args: {
-    status: STATUS_VARIANT.todo,
+    status: TASK_STATUS.TODO,
   },
 };
 
@@ -18,18 +18,18 @@ export const Default: Story = {};
 
 export const Todo: Story = {
   args: {
-    status: STATUS_VARIANT.todo,
+    status: TASK_STATUS.TODO,
   },
 };
 
 export const Doing: Story = {
   args: {
-    status: STATUS_VARIANT.doing,
+    status: TASK_STATUS.DOING,
   },
 };
 
 export const Done: Story = {
   args: {
-    status: STATUS_VARIANT.done,
+    status: TASK_STATUS.DONE,
   },
 };
