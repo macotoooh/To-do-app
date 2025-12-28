@@ -1,4 +1,7 @@
-import { Outlet } from "react-router";
+import { Link, Outlet, useMatch } from "react-router";
+import { AppButton } from "stories/button";
+import { BUTTON_VARIANT } from "stories/button/constants";
+import { useTodoLayout } from "~/features/todos/use-todos-layout";
 import { getTaskList } from "~/server/todos/get-task-list";
 import type { TaskDTO } from "~/types/tasks";
 
@@ -17,9 +20,29 @@ export const loader = async (): Promise<TaskDTO[]> => {
  * Provides a common layout for all nested todo pages.
  */
 export const TodosLayout = () => {
+  const { isNewPage, isTodoListPage, headerTitle } = useTodoLayout();
+
   return (
     <div className="w-full p-5">
-      <h1 className="font-bold text-3xl">Todos</h1>
+      <div className="flex justify-between">
+        <div className="flex items-center">
+          {!isTodoListPage && (
+            <Link
+              to="/todos"
+              className="text-2xl font-bold hover:opacity-90 pr-2"
+              aria-label="Back to Todos"
+            >
+              〈
+            </Link>
+          )}
+          <h1 className="font-bold text-3xl">{headerTitle}</h1>
+        </div>
+        {!isNewPage && (
+          <Link to="/todos/new">
+            <AppButton color={BUTTON_VARIANT.new}>New task</AppButton>
+          </Link>
+        )}
+      </div>
       <Outlet />
     </div>
   );
