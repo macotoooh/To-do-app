@@ -16,6 +16,8 @@ import { BUTTON_VARIANT } from "stories/button/constants";
 import { AppSelect } from "stories/select";
 import { useNewTodo } from "~/features/todos/use-new-todo";
 import { AppLoading } from "stories/loading";
+import { AppToast } from "stories/toast";
+import { ERROR_TOAST } from "stories/toast/constants";
 
 type ActionData = {
   error?: string;
@@ -71,9 +73,7 @@ const NewTodo = () => {
   return (
     <>
       {actionData?.error && (
-        <p className="text-red-600 text-base my-2 bg-red-100 p-2">
-          {actionData.error}
-        </p>
+        <AppToast variant={ERROR_TOAST}>{actionData.error}</AppToast>
       )}
       <Form
         method="post"
