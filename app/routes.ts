@@ -5,6 +5,6 @@ export default [
   route("todos", "routes/todos.tsx", [
     index("routes/todos._index.tsx"),
     route("new", "routes/todos.new.tsx"),
-    // route(":id", "routes/todos.$id.tsx"),
+    route(":id", "routes/todos.$id.tsx"),
   ]),
 ] satisfies RouteConfig;
