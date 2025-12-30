@@ -10,6 +10,7 @@ import { useMatch } from "react-router";
  */
 export const useTodoLayout = () => {
   const isNewPage = !!useMatch("/todos/new");
+  const isDetailPage = !!useMatch("/todos/:id");
   const isTodoListPage = !!useMatch("/todos");
 
   /**
@@ -17,12 +18,14 @@ export const useTodoLayout = () => {
    *
    * - "Create todo" for the new todo page
    * - "Todos" for the todo list page
+   * - "Todo Detail"" for the todo detail page
    *
    * @returns Header title for the todo layout
    */
   const getHeaderTitle = () => {
     if (isNewPage) return "Create todo";
     if (isTodoListPage) return "Todos";
+    if (isDetailPage) return "Todo Detail";
     return "";
   };
 
