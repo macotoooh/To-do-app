@@ -9,6 +9,7 @@ import {
   useSearchParams,
   useSubmit,
 } from "react-router";
+import { ACTION_INTENT } from "~/constants/tasks";
 import type { loader } from "~/routes/todos.$id";
 import { UpdateTaskSchema, type UpdateTaskInput } from "~/schemas/task";
 
@@ -62,11 +63,24 @@ export const useTodoDetail = () => {
    */
   const onValid = (data: UpdateTaskInput) => {
     const formData = new FormData();
+    formData.append("intent", ACTION_INTENT.UPDATE);
     formData.append("title", data.title);
     formData.append("content", data.content);
     formData.append("status", data.status);
 
     submit(formData, { method: "put" });
+  };
+
+  /**
+   * Handles task deletion when the Delete button in the modal is clicked.
+   *
+   * Sends a form submission with a special `deleteKey` to trigger deletion logic.
+   */
+  const onDelete = () => {
+    const formData = new FormData();
+    formData.append("intent", ACTION_INTENT.DELETE);
+
+    submit(formData, { method: "post" });
   };
 
   useEffect(() => {
@@ -88,5 +102,6 @@ export const useTodoDetail = () => {
     onValid,
     showSuccess,
     actionData,
+    onDelete,
   };
 };

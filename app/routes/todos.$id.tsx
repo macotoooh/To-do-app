@@ -4,8 +4,10 @@ import {
   type LoaderFunctionArgs,
 } from "react-router";
 import { AppLoading } from "stories/loading";
+import { ACTION_INTENT, type ActionIntent } from "~/constants/tasks";
 import { TodoForm } from "~/features/todos/components/todo-form";
 import { useTodoDetail } from "~/features/todos/hooks/use-todo-detail";
+import { deleteTaskById } from "~/server/todos/delete-task-be-id";
 import { getTaskById } from "~/server/todos/get-task-by-id";
 import { updateTask } from "~/server/todos/update-task";
 import { getTaskStatus } from "~/utils/task-status";
@@ -31,26 +33,55 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 };
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
-  try {
-    const formData = await request.formData();
+  const formData = await request.formData();
+  const intent = formData.get("intent");
+  const id = params.id;
 
-    const data = {
-      id: String(params.id),
-      title: String(formData.get("title")),
-      content: String(formData.get("content")),
-      status: getTaskStatus(formData.get("status")),
-    };
+  if (!id) {
+    return { error: "Invalid task id." };
+  }
 
-    const task = await updateTask(data);
+  if (intent !== ACTION_INTENT.UPDATE && intent !== ACTION_INTENT.DELETE) {
+    return { error: "Invalid action intent." };
+  }
 
-    // Intentionally throw an error to test error handling UI
-    // throw new Error("Test error");
+  // Narrow form intent to a valid domain-specific ActionIntent
+  const actionIntent: ActionIntent = intent;
 
-    return redirect(`/todos/${task.id}?updated=true`);
-  } catch (error) {
-    return {
-      error: "Failed to update task. Please try again.",
-    };
+  switch (actionIntent) {
+    case ACTION_INTENT.DELETE: {
+      try {
+        const deleted = await deleteTaskById(id);
+        if (!deleted) {
+          return { error: "Task not found or already deleted." };
+        }
+        // Intentionally throw an error to test error handling UI
+        // throw new Error("Test error");
+        return redirect("/todos?deleted=true");
+      } catch (error) {
+        return {
+          error: "Failed to delete task. Please try again.",
+        };
+      }
+    }
+    case ACTION_INTENT.UPDATE: {
+      try {
+        const data = {
+          id,
+          title: String(formData.get("title")),
+          content: String(formData.get("content")),
+          status: getTaskStatus(formData.get("status")),
+        };
+        const task = await updateTask(data);
+        // Intentionally throw an error to test error handling UI
+        // throw new Error("Test error");
+        return redirect(`/todos/${task.id}?updated=true`);
+      } catch (error) {
+        return {
+          error: "Failed to update task. Please try again.",
+        };
+      }
+    }
   }
 };
 
@@ -73,6 +104,7 @@ const TodoDetail = () => {
     onValid,
     showSuccess,
     actionData,
+    onDelete,
   } = useTodoDetail();
 
   if (isSubmitting) {
@@ -102,6 +134,7 @@ const TodoDetail = () => {
         onSubmit={handleSubmit(onValid)}
         isSubmitting={isSubmitting}
         statusValue={watch("status")}
+        onDelete={onDelete}
       />
     </>
   );

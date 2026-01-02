@@ -5,3 +5,10 @@ export const TASK_STATUS = {
 } as const;
 
 export type TaskStatus = (typeof TASK_STATUS)[keyof typeof TASK_STATUS];
+
+export const ACTION_INTENT = {
+  UPDATE: "UPDATE",
+  DELETE: "DELETE",
+} as const;
+
+export type ActionIntent = "UPDATE" | "DELETE";
