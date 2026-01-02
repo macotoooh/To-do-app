@@ -19,7 +19,7 @@ export const TodosIndex = () => {
       {showDeletedToast && (
         <AppToast variant={SUCCESS_TOAST}>Todo deleted successfully.</AppToast>
       )}
-      <div className="mt-2 p-5 bg-[#EEE8E8] hover:opacity-90">
+      <div className="mt-2 p-5 bg-[#EEE8E8] hover:opacity-90 max-h-170 overflow-y-auto">
         {tasks.map((task) => (
           <Link
             key={task.id}

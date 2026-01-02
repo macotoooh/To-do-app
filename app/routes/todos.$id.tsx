@@ -4,6 +4,8 @@ import {
   type LoaderFunctionArgs,
 } from "react-router";
 import { AppLoading } from "stories/loading";
+import { AppToast } from "stories/toast";
+import { ERROR_TOAST, SUCCESS_TOAST } from "stories/toast/constants";
 import { ACTION_INTENT, type ActionIntent } from "~/constants/tasks";
 import { TodoForm } from "~/features/todos/components/todo-form";
 import { useTodoDetail } from "~/features/todos/hooks/use-todo-detail";
@@ -103,7 +105,7 @@ const TodoDetail = () => {
     isSubmitting,
     onValid,
     showSuccess,
-    actionData,
+    error,
     onDelete,
   } = useTodoDetail();
 
@@ -114,17 +116,13 @@ const TodoDetail = () => {
   return (
     <>
       {showSuccess && (
-        <p className="text-green-600 text-base font-bold my-2 bg-green-100 p-2">
+        <AppToast variant={SUCCESS_TOAST}>
           {showSuccess === "created"
             ? "Todo created successfully."
             : "Update completed successfully."}
-        </p>
+        </AppToast>
       )}
-      {actionData?.error && (
-        <p className="text-red-600 text-base my-2 bg-red-100 p-2">
-          {actionData.error}
-        </p>
-      )}
+      {error && <AppToast variant={ERROR_TOAST}>{error}</AppToast>}
       <TodoForm
         control={control}
         titleName="title"

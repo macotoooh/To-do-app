@@ -1,8 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useNavigation, useSubmit } from "react-router";
+import { useActionData, useNavigation, useSubmit } from "react-router";
 import { TASK_STATUS } from "~/constants/tasks";
 import { CreateTaskSchema, type CreateTaskInput } from "~/schemas/task";
+import type { ActionData } from "~/types/tasks";
 
 /**
  * Hook for the new todo creation page.
@@ -28,6 +29,7 @@ export const useNewTodo = () => {
   });
 
   const isSubmitting = navigation.state === "submitting";
+  const actionData = useActionData<ActionData>();
 
   /**
    * Called when form validation succeeds.
@@ -50,5 +52,6 @@ export const useNewTodo = () => {
     form,
     isSubmitting,
     onValid,
+    error: actionData?.error,
   };
 };
