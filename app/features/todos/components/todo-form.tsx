@@ -61,7 +61,11 @@ export const TodoForm = <T extends FieldValues>({
           control={control}
           label="Title"
           placeholder="Enter title"
-          errorText={errors.title?.message as string | undefined}
+          errorText={
+            typeof errors.title?.message === "string"
+              ? errors.title.message
+              : undefined
+          }
         />
 
         <AppSelect
@@ -74,7 +78,11 @@ export const TodoForm = <T extends FieldValues>({
             { label: "Doing", value: TASK_STATUS.DOING },
             { label: "Done", value: TASK_STATUS.DONE },
           ]}
-          errorText={errors.status?.message as string | undefined}
+          errorText={
+            typeof errors.status?.message === "string"
+              ? errors.status.message
+              : undefined
+          }
           status={statusValue}
         />
 
@@ -83,7 +91,11 @@ export const TodoForm = <T extends FieldValues>({
           control={control}
           label="Content"
           placeholder="Enter content"
-          errorText={errors.content?.message as string | undefined}
+          errorText={
+            typeof errors.content?.message === "string"
+              ? errors.content.message
+              : undefined
+          }
           rows={5}
         />
 
