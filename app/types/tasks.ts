@@ -20,3 +20,7 @@ export type TaskDTO = Omit<Task, "createdAt" | "updatedAt"> & {
   createdAt: string;
   updatedAt: string;
 };
+
+export type ActionData = {
+  error?: string;
+};

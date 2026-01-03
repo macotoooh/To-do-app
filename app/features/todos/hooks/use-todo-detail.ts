@@ -12,10 +12,7 @@ import {
 import { ACTION_INTENT } from "~/constants/tasks";
 import type { loader } from "~/routes/todos.$id";
 import { UpdateTaskSchema, type UpdateTaskInput } from "~/schemas/task";
-
-type ActionData = {
-  error?: string;
-};
+import type { ActionData } from "~/types/tasks";
 
 /**
  * Hook for the todo detail page.
@@ -101,7 +98,7 @@ export const useTodoDetail = () => {
     isSubmitting,
     onValid,
     showSuccess,
-    actionData,
+    error: actionData?.error,
     onDelete,
   };
 };

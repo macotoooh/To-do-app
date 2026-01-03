@@ -1,15 +1,11 @@
-import { redirect, useActionData, type ActionFunctionArgs } from "react-router";
+import { redirect, type ActionFunctionArgs } from "react-router";
 import { createTask } from "~/server/todos/create-task";
 import { getTaskStatus } from "~/utils/task-status";
-import { useNewTodo } from "~/features/todos/use-new-todo";
+import { useNewTodo } from "~/features/todos/hooks/use-new-todo";
 import { AppLoading } from "stories/loading";
 import { AppToast } from "stories/toast";
 import { ERROR_TOAST } from "stories/toast/constants";
 import { TodoForm } from "~/features/todos/components/todo-form";
-
-type ActionData = {
-  error?: string;
-};
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   try {
@@ -50,9 +46,8 @@ const NewTodo = () => {
     },
     isSubmitting,
     onValid,
+    error,
   } = useNewTodo();
-
-  const actionData = useActionData<ActionData>();
 
   if (isSubmitting) {
     return <AppLoading />;
@@ -60,9 +55,7 @@ const NewTodo = () => {
 
   return (
     <>
-      {actionData?.error && (
-        <AppToast variant={ERROR_TOAST}>{actionData.error}</AppToast>
-      )}
+      {error && <AppToast variant={ERROR_TOAST}>{error}</AppToast>}
       <TodoForm
         control={control}
         titleName="title"

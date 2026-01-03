@@ -1,7 +1,7 @@
-import { Link, Outlet, useMatch } from "react-router";
+import { Link, Outlet } from "react-router";
 import { AppButton } from "stories/button";
 import { BUTTON_VARIANT } from "stories/button/constants";
-import { useTodoLayout } from "~/features/todos/use-todos-layout";
+import { useTodoLayout } from "~/features/todos/hooks/use-todos-layout";
 import { getTaskList } from "~/server/todos/get-task-list";
 import type { TaskDTO } from "~/types/tasks";
 
@@ -24,7 +24,7 @@ export const TodosLayout = () => {
 
   return (
     <div className="w-full p-5">
-      <div className="flex justify-between">
+      <div className="sticky top-0 flex justify-between p-2 bg-white">
         <div className="flex items-center">
           {!isTodoListPage && (
             <Link
