@@ -9,7 +9,7 @@ import { ERROR_TOAST, SUCCESS_TOAST } from "stories/toast/constants";
 import { ACTION_INTENT, type ActionIntent } from "~/constants/tasks";
 import { TodoForm } from "~/features/todos/components/todo-form";
 import { useTodoDetail } from "~/features/todos/hooks/use-todo-detail";
-import { deleteTaskById } from "~/server/todos/delete-task-be-id";
+import { deleteTaskById } from "~/server/todos/delete-task-by-id";
 import { getTaskById } from "~/server/todos/get-task-by-id";
 import { updateTask } from "~/server/todos/update-task";
 import { getTaskStatus } from "~/utils/task-status";
