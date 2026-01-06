@@ -38,7 +38,7 @@ export const AppModal = ({
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/20 z-50">
       <div className="bg-white w-96 p-6 rounded-lg shadow-xl">
-        <h3 className="text-xl font-semibold text-gray-900 mb-6">{title}</h3>
+        <h3 className="text-xl font-semibold mb-6">{title}</h3>
         <div className="flex justify-end gap-3">
           {cancelLabel && onCancel && (
             <AppButton onClick={onCancel} color={cancelColor}>

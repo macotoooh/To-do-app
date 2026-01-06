@@ -43,11 +43,11 @@ export const AppTextarea = <T extends FieldValues>({
         <textarea
           {...field}
           placeholder={placeholder}
-          className={`w-full p-2 border border-gray-500 rounded-md resize-none ${errorText ? "bg-red-100 text-red-500" : ""}`}
+          className={`w-full p-2 border border-form-border rounded-md resize-none ${errorText ? "bg-error-bg text-error-text" : ""}`}
           rows={rows}
         />
       </div>
-      {errorText && <p className="text-red-500 text-sm">{errorText}</p>}
+      {errorText && <p className="text-error-text text-sm">{errorText}</p>}
     </>
   );
 };
