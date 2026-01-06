@@ -17,9 +17,9 @@ type AppStatusLabelProps = {
  */
 export const AppStatusLabel = ({ status }: AppStatusLabelProps) => {
   const statusToClass = {
-    TODO: "bg-[#FFF1F1] text-[#FF6F6F]",
-    DOING: "bg-[#FFFBEB] text-[#F59E0B]",
-    DONE: "bg-[#ECFDF5] text-[#10B981]",
+    TODO: "bg-status-todo-bg text-status-todo-text",
+    DOING: "bg-status-doing-bg text-status-doing-text",
+    DONE: "bg-status-done-bg text-status-done-text",
   };
 
   return (

@@ -40,10 +40,10 @@ export const AppInput = <T extends FieldValues>({
         <input
           {...field}
           placeholder={placeholder}
-          className={`w-full p-2 border border-gray-500 rounded-md ${errorText ? "bg-red-100 text-red-500" : ""}`}
+          className={`w-full p-2 border border-form-border rounded-md ${errorText ? "bg-error-bg text-error-text" : ""}`}
         />
       </div>
-      {errorText && <p className="text-red-500 text-sm">{errorText}</p>}
+      {errorText && <p className="text-error-text text-sm">{errorText}</p>}
     </>
   );
 };

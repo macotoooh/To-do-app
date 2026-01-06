@@ -43,9 +43,9 @@ export const AppSelect = <T extends FieldValues>({
 }: AppSelectProps<T>) => {
   const { field } = useController({ name, control });
   const statusToClass = {
-    TODO: "bg-[#FFF1F1] text-[#FF6F6F]",
-    DOING: "bg-[#FFFBEB] text-[#F59E0B]",
-    DONE: "bg-[#ECFDF5] text-[#10B981]",
+    TODO: "bg-status-todo-bg text-status-todo-text",
+    DOING: "bg-status-doing-bg text-status-doing-text",
+    DONE: "bg-status-done-bg text-status-done-text",
   };
 
   return (
@@ -54,7 +54,7 @@ export const AppSelect = <T extends FieldValues>({
         {label && <label className="text-sm">{label}</label>}
         <select
           {...field}
-          className={`w-full p-2 border border-gray-500 rounded-md font-bold ${status ? statusToClass[status] : ""} ${errorText ? "bg-red-100 text-red-500" : ""}`}
+          className={`w-full p-2 border border-form-border rounded-md font-bold ${status ? statusToClass[status] : ""} ${errorText ? "bg-error-bg text-error-text" : ""}`}
         >
           {placeholder && <option value="">{placeholder}</option>}
           {options.map((opt) => (
@@ -64,7 +64,7 @@ export const AppSelect = <T extends FieldValues>({
           ))}
         </select>
       </div>
-      {errorText && <p className="text-red-500 text-sm">{errorText}</p>}
+      {errorText && <p className="text-error-text text-sm">{errorText}</p>}
     </>
   );
 };

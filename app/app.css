@@ -11,3 +11,38 @@ body {
   @apply bg-white;
   @apply text-[#454040];
 }
+
+@theme {
+  --color-surface-bg: #eee8e8;
+  --color-card-bg: #f4efef;
+
+  /* Button */
+  --color-primary-bg: #84c94b;
+  --color-neutral-bg: #d9d9d9;
+  --color-new-bg: #e0f2fe;
+  --color-new-text: #0284c7;
+  --color-danger-bg: #ff6f6f;
+
+  /* Status - TODO */
+  --color-status-todo-text: #ff6f6f;
+  --color-status-todo-bg: #fff1f1;
+
+  /* Status - DOING */
+  --color-status-doing-text: #f59e0b;
+  --color-status-doing-bg: #fffbeb;
+
+  /* Status - DONE */
+  --color-status-done-text: #10b981;
+  --color-status-done-bg: #ecfdf5;
+
+  /* Form */
+  --color-form-border: #6b7280;
+
+  /* Error */
+  --color-error-text: #ef4444;
+  --color-error-bg: #fef2f2;
+
+  /* Success */
+  --color-success-text: #16a34a;
+  --color-success-bg: #dcfce7;
+}

@@ -23,8 +23,8 @@ export const AppToast = ({
     <div
       className={`text-base font-bold my-2 p-2 ${
         variant === SUCCESS_TOAST
-          ? "text-green-600 bg-green-100"
-          : "text-red-600 bg-red-100"
+          ? "text-success-text bg-success-bg"
+          : "text-error-text bg-error-bg"
       }`}
     >
       {children}

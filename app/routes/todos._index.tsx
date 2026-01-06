@@ -19,26 +19,28 @@ export const TodosIndex = () => {
         <AppToast variant={SUCCESS_TOAST}>Todo deleted successfully.</AppToast>
       )}
 
-      <div className="hidden lg:grid lg:grid-cols-3 gap-5 px-2 font-semibold bg-[#EEE8E8] sticky top-15 z-10">
+      <div className="hidden lg:grid lg:grid-cols-3 gap-5 px-2 font-semibold bg-surface-bg sticky top-15 z-10">
         <div className="p-2">Title</div>
         <div className="p-2">Status</div>
         <div className="p-2">Created At</div>
       </div>
 
-      <div className="mt-2 p-5 bg-[#EEE8E8] rounded-md space-y-2 overflow-y-auto lg:max-h-200">
+      <div className="mt-2 p-5 bg-surface-bg rounded-md space-y-2 overflow-y-auto lg:max-h-200">
         {tasks.map((task) => (
           <a
             key={task.id}
             href={`/todos/${task.id}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="grid lg:grid-cols-3 grid-cols-1 gap-2 p-2 bg-[#F4EFEF] hover:bg-[#e0dcdc] transition-colors duration-200 rounded-md"
+            className="grid lg:grid-cols-3 grid-cols-1 gap-2 p-2 bg-card-bg hover:bg-[#e0dcdc] transition-colors duration-200 rounded-md"
           >
-            <div className="p-2 bg-[#EEE8E8] font-bold">{task.title}</div>
-            <div className="p-2 bg-[#EEE8E8]">
+            <div className="p-2 bg-surface-bg font-bold">{task.title}</div>
+            <div className="p-2 bg-surface-bg">
               <AppStatusLabel status={task.status} />
             </div>
-            <div className="p-2 bg-[#EEE8E8]">{formatDate(task.createdAt)}</div>
+            <div className="p-2 bg-surface-bg">
+              {formatDate(task.createdAt)}
+            </div>
           </a>
         ))}
       </div>
