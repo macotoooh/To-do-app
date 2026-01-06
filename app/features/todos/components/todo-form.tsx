@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { Control, FieldErrors, FieldValues, Path } from "react-hook-form";
-import { Form } from "react-router";
+import { Form, useMatch } from "react-router";
 import { AppButton } from "stories/button";
 import { BUTTON_VARIANT } from "stories/button/constants";
 import { AppInput } from "stories/input";
@@ -53,6 +53,7 @@ export const TodoForm = <T extends FieldValues>({
   onDelete,
 }: TodoFormProps<T>) => {
   const [isOpenModal, setOpenModal] = useState(false);
+
   return (
     <>
       <Form method="post" className="space-y-4" onSubmit={onSubmit}>
@@ -100,13 +101,15 @@ export const TodoForm = <T extends FieldValues>({
         />
 
         <div className="flex gap-x-2 justify-end pt-4">
-          <AppButton
-            type="button"
-            color={BUTTON_VARIANT.danger}
-            onClick={() => setOpenModal(!isOpenModal)}
-          >
-            Delete
-          </AppButton>
+          {onDelete && (
+            <AppButton
+              type="button"
+              color={BUTTON_VARIANT.danger}
+              onClick={() => setOpenModal(true)}
+            >
+              Delete
+            </AppButton>
+          )}
           <AppButton
             color={BUTTON_VARIANT.primary}
             type="submit"
@@ -120,9 +123,13 @@ export const TodoForm = <T extends FieldValues>({
         <AppModal
           title="Delete this item?"
           confirmLabel="Delete"
+          cancelLabel="Cancel"
           onConfirm={() => {
-            setOpenModal(!isOpenModal);
+            setOpenModal(false);
             onDelete();
+          }}
+          onCancel={() => {
+            setOpenModal(false);
           }}
         />
       )}
