@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import { AppStatusLabel } from "stories/status-label";
 import { AppToast } from "stories/toast";
 import { SUCCESS_TOAST } from "stories/toast/constants";
@@ -27,11 +28,9 @@ export const TodosIndex = () => {
 
       <div className="mt-2 p-5 bg-surface-bg rounded-md space-y-2 overflow-y-auto lg:max-h-200">
         {tasks.map((task) => (
-          <a
+          <Link
             key={task.id}
-            href={`/todos/${task.id}`}
-            target="_blank"
-            rel="noopener noreferrer"
+            to={`/todos/${task.id}`}
             className="grid lg:grid-cols-3 grid-cols-1 gap-2 p-2 bg-card-bg hover:bg-[#e0dcdc] transition-colors duration-200 rounded-md"
           >
             <div className="p-2 bg-surface-bg font-bold">{task.title}</div>
@@ -41,7 +40,7 @@ export const TodosIndex = () => {
             <div className="p-2 bg-surface-bg">
               {formatDate(task.createdAt)}
             </div>
-          </a>
+          </Link>
         ))}
       </div>
     </>
