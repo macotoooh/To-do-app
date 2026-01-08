@@ -1,6 +1,5 @@
 import { AppButton } from "stories/button";
 import { BUTTON_VARIANT } from "stories/button/constants";
-import { useTodoLayout } from "~/features/todos/hooks/use-todos-layout";
 import {
   Link,
   Outlet,
@@ -8,19 +7,22 @@ import {
   type LoaderFunctionArgs,
 } from "react-router";
 import { getHeaderTitle } from "~/utils/routes";
+import { PATH } from "~/constants/routes";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const url = new URL(request.url);
   const pathname = url.pathname;
 
-  const headerTitle = getHeaderTitle(pathname);
-
-  return { headerTitle };
+  return {
+    headerTitle: getHeaderTitle(pathname),
+    isTodoListPage: pathname === PATH.TODO.LIST,
+    isCreatePage: pathname === PATH.TODO.CREATE,
+  };
 };
 
 export const TodosLayout = () => {
-  const { isNewPage, isTodoListPage } = useTodoLayout();
-  const { headerTitle } = useLoaderData<typeof loader>();
+  const { headerTitle, isCreatePage, isTodoListPage } =
+    useLoaderData<typeof loader>();
 
   return (
     <div className="w-full p-5">
@@ -37,7 +39,7 @@ export const TodosLayout = () => {
           )}
           <h1 className="font-bold text-3xl">{headerTitle}</h1>
         </div>
-        {!isNewPage && (
+        {!isCreatePage && (
           <Link to="/todos/new">
             <AppButton color={BUTTON_VARIANT.new}>New task</AppButton>
           </Link>
