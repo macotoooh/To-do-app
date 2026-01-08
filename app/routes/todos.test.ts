@@ -12,28 +12,43 @@ describe("todos loader", () => {
     vi.clearAllMocks();
   });
 
-  describe("loader - headerTitle resolution", () => {
+  describe("todos loader - headerTitle + isTodoListPage + isCreatePage", () => {
     test.each([
       {
         input: new Request("http://localhost/todos"),
-        expected: ROUTE.TODO_LIST,
+        expected: {
+          headerTitle: ROUTE.TODO_LIST,
+          isTodoListPage: true,
+          isCreatePage: false,
+        },
       },
       {
         input: new Request("http://localhost/todos/new"),
-        expected: ROUTE.CREATE_TODO,
+        expected: {
+          headerTitle: ROUTE.CREATE_TODO,
+          isTodoListPage: false,
+          isCreatePage: true,
+        },
       },
       {
         input: new Request("http://localhost/todos/1"),
-        expected: ROUTE.TODO_DETAIL,
+        expected: {
+          headerTitle: ROUTE.TODO_DETAIL,
+          isTodoListPage: false,
+          isCreatePage: false,
+        },
       },
-      { input: new Request("http://localhost/"), expected: "" },
-      { input: new Request("http://localhost/invalid/path"), expected: "" },
-    ])(
-      "returns $expected for input $input.url",
-      async ({ input, expected }) => {
-        const result = await loader(createLoaderArgs({ request: input }));
-        expect(result).toEqual({ headerTitle: expected });
-      }
-    );
+      {
+        input: new Request("http://localhost/invalid"),
+        expected: {
+          headerTitle: "",
+          isTodoListPage: false,
+          isCreatePage: false,
+        },
+      },
+    ])("returns correct values for $input.url", async ({ input, expected }) => {
+      const result = await loader(createLoaderArgs({ request: input }));
+      expect(result).toEqual(expected);
+    });
   });
 });

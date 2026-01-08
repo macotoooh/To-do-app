@@ -1,4 +1,4 @@
-import type { ROUTE } from "~/constants/routes";
+import type { PATH, ROUTE } from "~/constants/routes";
 import type { TASK_STATUS } from "~/constants/tasks";
 
 export type TaskStatus = (typeof TASK_STATUS)[keyof typeof TASK_STATUS];
@@ -27,3 +27,5 @@ export type ActionData = {
 };
 
 export type RouteValue = (typeof ROUTE)[keyof typeof ROUTE];
+
+export type ValidTodoPaths = typeof PATH.TODO.LIST | typeof PATH.TODO.CREATE;
