@@ -4,6 +4,18 @@ import { AppToast } from "stories/toast";
 import { SUCCESS_TOAST } from "stories/toast/constants";
 import { useTodosIndex } from "~/features/todos/hooks/use-todos-index";
 import { formatDate } from "~/utils/format-date";
+import { getTaskList } from "~/server/todos/get-task-list";
+import type { LoaderFunctionArgs } from "react-router";
+import type { TaskDTO } from "~/types/tasks";
+
+export const loader = async ({}: LoaderFunctionArgs): Promise<TaskDTO[]> => {
+  const tasks = await getTaskList();
+  return tasks.map((task) => ({
+    ...task,
+    createdAt: task.createdAt.toISOString(),
+    updatedAt: task.updatedAt.toISOString(),
+  }));
+};
 
 /**
  * Todos index page component.
