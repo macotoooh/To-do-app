@@ -1,26 +1,26 @@
-import { Link, Outlet } from "react-router";
 import { AppButton } from "stories/button";
 import { BUTTON_VARIANT } from "stories/button/constants";
 import { useTodoLayout } from "~/features/todos/hooks/use-todos-layout";
-import { getTaskList } from "~/server/todos/get-task-list";
-import type { TaskDTO } from "~/types/tasks";
+import {
+  Link,
+  Outlet,
+  useLoaderData,
+  type LoaderFunctionArgs,
+} from "react-router";
+import { getHeaderTitle } from "~/utils/routes";
 
-export const loader = async (): Promise<TaskDTO[]> => {
-  const tasks = await getTaskList();
-  return tasks.map((task) => ({
-    ...task,
-    createdAt: task.createdAt.toISOString(),
-    updatedAt: task.updatedAt.toISOString(),
-  }));
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const url = new URL(request.url);
+  const pathname = url.pathname;
+
+  const headerTitle = getHeaderTitle(pathname);
+
+  return { headerTitle };
 };
 
-/**
- * Layout component for the `/todos` route.
- *
- * Provides a common layout for all nested todo pages.
- */
 export const TodosLayout = () => {
-  const { isNewPage, isTodoListPage, headerTitle } = useTodoLayout();
+  const { isNewPage, isTodoListPage } = useTodoLayout();
+  const { headerTitle } = useLoaderData<typeof loader>();
 
   return (
     <div className="w-full p-5">
@@ -29,7 +29,7 @@ export const TodosLayout = () => {
           {!isTodoListPage && (
             <Link
               to="/todos"
-              className="text-2xl font-bold hover:opacity-90 pr-2"
+              className="text-2xl font-bold hover:opacity-50 pr-2"
               aria-label="Back to Todos"
             >
               〈
