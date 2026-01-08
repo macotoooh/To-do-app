@@ -1,15 +1,12 @@
 import { format, parseISO } from "date-fns";
 
 /**
- * Formats an ISO date string into a specified date-time pattern.
+ * Formats an Date into a yyyy/MM/dd HH:mm pattern.
  *
- * @param isoString ISO 8601 formatted date string
- * @param pattern Date format pattern (default: "yyyy/MM/dd HH:mm")
+ * @param date date
+ *
  * @returns Formatted date-time string
  */
-export const formatDate = (
-  isoString: string,
-  pattern = "yyyy/MM/dd HH:mm"
-): string => {
-  return format(parseISO(isoString), pattern);
+export const formatDate = (date: Date): string => {
+  return format(date, "yyyy/MM/dd HH:mm");
 };

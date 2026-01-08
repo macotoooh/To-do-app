@@ -27,7 +27,7 @@ describe("todos._index loader", () => {
     });
   });
 
-  test("returns tasks with ISO string timestamps", async () => {
+  test("returns tasks with YYYY/MM/DD HH:mm timestamps", async () => {
     // Arrange
     const mockTasks: Task[] = [
       {
@@ -35,8 +35,8 @@ describe("todos._index loader", () => {
         title: "Buy groceries",
         content: "Milk, eggs, bread",
         status: TASK_STATUS.TODO,
-        createdAt: new Date("2024-01-01T00:00:00Z"),
-        updatedAt: new Date("2024-01-02T00:00:00Z"),
+        createdAt: new Date("2026/01/03/12:00"),
+        updatedAt: new Date("2026/01/04/18:00"),
       },
     ];
 
@@ -50,8 +50,8 @@ describe("todos._index loader", () => {
     expect(result).toEqual([
       {
         ...mockTasks[0],
-        createdAt: "2024-01-01T00:00:00.000Z",
-        updatedAt: "2024-01-02T00:00:00.000Z",
+        createdAt: "2026/01/03 12:00",
+        updatedAt: "2026/01/04 18:00",
       },
     ]);
   });
