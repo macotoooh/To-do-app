@@ -16,8 +16,8 @@ export const loader = async () => {
 
     return tasks.map((task) => ({
       ...task,
-      createdAt: task.createdAt.toISOString(),
-      updatedAt: task.updatedAt.toISOString(),
+      createdAt: formatDate(task.createdAt),
+      updatedAt: formatDate(task.updatedAt),
     }));
   } catch (error) {
     console.error("Failed to load tasks:", error);
@@ -60,9 +60,7 @@ export const TodosIndex = () => {
             <div className="p-2 bg-surface-bg">
               <AppStatusLabel status={task.status} />
             </div>
-            <div className="p-2 bg-surface-bg">
-              {formatDate(task.createdAt)}
-            </div>
+            <div className="p-2 bg-surface-bg">{task.createdAt}</div>
           </Link>
         ))}
       </div>
