@@ -21,7 +21,7 @@ export const useTodosIndex = () => {
   useEffect(() => {
     if (!deleted) return;
 
-    setShowDeletedToast(!showDeletedToast);
+    setShowDeletedToast(true);
 
     const timer = setTimeout(() => {
       setShowDeletedToast(false);
