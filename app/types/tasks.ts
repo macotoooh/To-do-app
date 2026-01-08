@@ -1,3 +1,4 @@
+import type { ROUTE } from "~/constants/routes";
 import type { TASK_STATUS } from "~/constants/tasks";
 
 export type TaskStatus = (typeof TASK_STATUS)[keyof typeof TASK_STATUS];
@@ -24,3 +25,5 @@ export type TaskDTO = Omit<Task, "createdAt" | "updatedAt"> & {
 export type ActionData = {
   error?: string;
 };
+
+export type RouteValue = (typeof ROUTE)[keyof typeof ROUTE];

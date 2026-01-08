@@ -4,6 +4,29 @@ import { AppToast } from "stories/toast";
 import { SUCCESS_TOAST } from "stories/toast/constants";
 import { useTodosIndex } from "~/features/todos/hooks/use-todos-index";
 import { formatDate } from "~/utils/format-date";
+import { getTaskList } from "~/server/todos/get-task-list";
+
+export const loader = async () => {
+  try {
+    const tasks = await getTaskList();
+
+    if (!Array.isArray(tasks)) {
+      throw new Error("Invalid task list format");
+    }
+
+    return tasks.map((task) => ({
+      ...task,
+      createdAt: task.createdAt.toISOString(),
+      updatedAt: task.updatedAt.toISOString(),
+    }));
+  } catch (error) {
+    console.error("Failed to load tasks:", error);
+    throw new Response("Could not load tasks", {
+      status: 500,
+      statusText: "Internal Server Error",
+    });
+  }
+};
 
 /**
  * Todos index page component.

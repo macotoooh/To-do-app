@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useRouteLoaderData, useSearchParams } from "react-router";
+import { useLoaderData, useNavigate, useSearchParams } from "react-router";
 import type { TaskDTO } from "~/types/tasks";
 
 /**
@@ -10,7 +10,7 @@ import type { TaskDTO } from "~/types/tasks";
  * @returns Tasks and success state
  */
 export const useTodosIndex = () => {
-  const tasks = useRouteLoaderData<TaskDTO[]>("routes/todos");
+  const tasks = useLoaderData() as TaskDTO[];
   const [params] = useSearchParams();
   const navigate = useNavigate();
 

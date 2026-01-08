@@ -17,7 +17,7 @@ export const createLoaderArgs = (
 ): LoaderFunctionArgs => ({
   context: {},
   params: args.params ?? {},
-  request: new Request("http://localhost"),
+  request: args.request ?? new Request("http://localhost"),
   unstable_pattern: "",
 });
 
