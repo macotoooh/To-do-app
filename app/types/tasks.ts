@@ -1,4 +1,3 @@
-import type { PATH, ROUTE } from "~/constants/routes";
 import type { TASK_STATUS } from "~/constants/tasks";
 
 export type TaskStatus = (typeof TASK_STATUS)[keyof typeof TASK_STATUS];
