@@ -1,5 +1,3 @@
-import type { RouteValue, ValidTodoPaths } from "~/types/tasks";
-
 export const ROUTE = {
   TODO_LIST: "Todos",
   TODO_DETAIL: "Todos Detail",
@@ -13,9 +11,3 @@ export const PATH = {
     DETAIL: (id: string | number) => `/todos/${id}`,
   },
 } as const;
-
-
-export const ROUTE_TITLE_MAP: Record<ValidTodoPaths, RouteValue> = {
-  [PATH.TODO.LIST]: ROUTE.TODO_LIST,
-  [PATH.TODO.CREATE]: ROUTE.CREATE_TODO,
-};
