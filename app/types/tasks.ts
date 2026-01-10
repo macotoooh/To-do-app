@@ -25,7 +25,3 @@ export type TaskDTO = Omit<Task, "createdAt" | "updatedAt"> & {
 export type ActionData = {
   error?: string;
 };
-
-export type RouteValue = (typeof ROUTE)[keyof typeof ROUTE];
-
-export type ValidTodoPaths = typeof PATH.TODO.LIST | typeof PATH.TODO.CREATE;
