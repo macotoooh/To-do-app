@@ -8,4 +8,9 @@ export default defineConfig({
       stories: path.resolve(__dirname, "stories"),
     },
   },
+  test: {
+    environment: "jsdom",
+    globals: true,
+    setupFiles: "./app/setup-tests.ts",
+  },
 });
