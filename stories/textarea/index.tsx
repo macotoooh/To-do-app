@@ -39,9 +39,15 @@ export const AppTextarea = <T extends FieldValues>({
   return (
     <>
       <div className="space-y-1">
-        {label && <label className="text-sm">{label}</label>}
+        {label && (
+          <label className="text-sm" htmlFor={field.name}>
+            {label}
+          </label>
+        )}
         <textarea
           {...field}
+          id={field.name}
+          name={field.name}
           placeholder={placeholder}
           className={`w-full p-2 border border-form-border rounded-md resize-none ${errorText ? "bg-error-bg text-error-text" : ""}`}
           rows={rows}

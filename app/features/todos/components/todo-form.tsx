@@ -56,7 +56,7 @@ export const TodoForm = <T extends FieldValues>({
 
   return (
     <>
-      <Form method="post" className="space-y-4" onSubmit={onSubmit}>
+      <form className="space-y-4" onSubmit={onSubmit}>
         <AppInput
           name={titleName}
           control={control}
@@ -118,7 +118,7 @@ export const TodoForm = <T extends FieldValues>({
             Save
           </AppButton>
         </div>
-      </Form>
+      </form>
       {isOpenModal && onDelete && (
         <AppModal
           title="Delete this item?"
