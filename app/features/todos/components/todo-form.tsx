@@ -1,6 +1,5 @@
 import { useState } from "react";
 import type { Control, FieldErrors, FieldValues, Path } from "react-hook-form";
-import { Form } from "react-router";
 import { AppButton } from "stories/button";
 import { BUTTON_VARIANT } from "stories/button/constants";
 import { AppInput } from "stories/input";
@@ -106,6 +105,7 @@ export const TodoForm = <T extends FieldValues>({
               type="button"
               color={BUTTON_VARIANT.danger}
               onClick={() => setOpenModal(true)}
+              testId="open-delete-modal"
             >
               Delete
             </AppButton>

@@ -44,7 +44,6 @@ export const AppInput = <T extends FieldValues>({
         <input
           {...field}
           id={field.name}
-          name={field.name} // 念のため明示的に
           placeholder={placeholder}
           className={`w-full p-2 border border-form-border rounded-md ${errorText ? "bg-error-bg text-error-text" : ""}`}
         />

@@ -59,7 +59,6 @@ export const AppSelect = <T extends FieldValues>({
         <select
           {...field}
           id={field.name}
-          name={field.name}
           className={`w-full p-2 border border-form-border rounded-md font-bold ${status ? statusToClass[status] : ""} ${errorText ? "bg-error-bg text-error-text" : ""}`}
         >
           {placeholder && <option value="">{placeholder}</option>}

@@ -6,6 +6,7 @@ import { BUTTON_VARIANT } from "./constants";
 type AppButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   children: ReactNode;
   color: ButtonColorValue;
+  testId?: string;
 };
 
 /**
@@ -13,12 +14,14 @@ type AppButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
  *
  * @param {ReactNode} children - The button label (e.g., 'save', 'delete')
  * @param {ButtonColorValue} color - Visual variant for the button style
+ * @param testId - Optional test ID for querying this button in unit tests
  *
  * @returns {JSX.Element} A styled button element with variant-based coloring
  */
 export const AppButton = ({
   children,
   color = BUTTON_VARIANT.primary,
+  testId,
   ...props
 }: AppButtonProps) => {
   const buttonStyle = getButtonColorClass(color);
@@ -32,6 +35,7 @@ export const AppButton = ({
         transition
         ${buttonStyle}
       `}
+      data-testid={testId ?? ""}
     >
       {children}
     </button>
