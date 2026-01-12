@@ -47,7 +47,6 @@ export const AppTextarea = <T extends FieldValues>({
         <textarea
           {...field}
           id={field.name}
-          name={field.name}
           placeholder={placeholder}
           className={`w-full p-2 border border-form-border rounded-md resize-none ${errorText ? "bg-error-bg text-error-text" : ""}`}
           rows={rows}

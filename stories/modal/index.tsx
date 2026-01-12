@@ -45,7 +45,11 @@ export const AppModal = ({
               {cancelLabel}
             </AppButton>
           )}
-          <AppButton onClick={onConfirm} color={confirmColor}>
+          <AppButton
+            onClick={onConfirm}
+            color={confirmColor}
+            testId="confirm-delete-modal"
+          >
             {confirmLabel}
           </AppButton>
         </div>
