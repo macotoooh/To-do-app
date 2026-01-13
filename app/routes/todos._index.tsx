@@ -56,11 +56,24 @@ export const TodosIndex = () => {
             to={`/todos/${task.id}`}
             className="grid lg:grid-cols-3 grid-cols-1 gap-2 p-2 bg-card-bg hover:bg-[#e0dcdc] transition-colors duration-200 rounded-md"
           >
-            <div className="p-2 bg-surface-bg font-bold">{task.title}</div>
-            <div className="p-2 bg-surface-bg">
+            <div
+              className="p-2 bg-surface-bg font-bold"
+              data-testid={`title-${task.id}`}
+            >
+              {task.title}
+            </div>
+            <div
+              className="p-2 bg-surface-bg"
+              data-testid={`status-${task.id}`}
+            >
               <AppStatusLabel status={task.status} />
             </div>
-            <div className="p-2 bg-surface-bg">{task.createdAt}</div>
+            <div
+              className="p-2 bg-surface-bg"
+              data-testid={`createdAt-${task.id}`}
+            >
+              {task.createdAt}
+            </div>
           </Link>
         ))}
       </div>
