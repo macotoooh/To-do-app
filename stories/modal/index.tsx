@@ -1,4 +1,3 @@
-import type { ButtonHTMLAttributes, ReactNode } from "react";
 import type { ButtonColorValue } from "stories/button/types";
 import { AppButton } from "stories/button";
 import { BUTTON_VARIANT } from "stories/button/constants";

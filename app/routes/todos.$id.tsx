@@ -60,7 +60,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         // Intentionally throw an error to test error handling UI
         // throw new Error("Test error");
         return redirect("/todos?deleted=true");
-      } catch (error) {
+      } catch (_error) {
         return {
           error: "Failed to delete task. Please try again.",
         };
@@ -78,7 +78,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         // Intentionally throw an error to test error handling UI
         // throw new Error("Test error");
         return redirect(`/todos/${task.id}?updated=true`);
-      } catch (error) {
+      } catch (_error) {
         return {
           error: "Failed to update task. Please try again.",
         };
