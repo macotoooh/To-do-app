@@ -1,87 +1,237 @@
-# Welcome to React Router!
+# 📝 Todo App with Remix-Inspired Architecture
 
-A modern, production-ready template for building full-stack React applications using React Router.
+A modular React app built with server-driven data flows using React Router v7, TypeScript, and React Hook Form.
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
+> 📘 [Japanese README](./docs/readme-ja.md)
 
-## Features
+## 📸 Demo
 
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
+🔗 [Todo App Demo](https://todo-app-ivory-pi-75.vercel.app/todos)
 
-## Getting Started
+## 🧭 Overview
 
-### Installation
+This app uses **React Router’s Data APIs** (`loader` and `action`) to handle data fetching and mutations like a backend.
+Reusable UI components are developed and tested in **Storybook** for scalability and maintainability.
 
-Install the dependencies:
+## ⚙️ Tech Stack
+
+- **React 19**
+- **React Router v7.10.1**
+- **TypeScript**
+- **React Hook Form** + **Zod**
+- **Storybook v10.1.10**
+- **Vitest** / **React Testing Library**
+- **GitHub Actions** (CI/CD)
+- **Vercel** (Hosting / Deployment)
+
+## ✨ Features
+
+- ✅ View list of todos
+- 🆕 Create new todo
+- 🔍 View and edit todo details
+  - 🗑️ Delete todo
+  - ✏️ Update todo
+
+### 📋 Todo List (Desktop View)
+
+- Displays todos in a table format
+- Status is color-coded with labels
+- Includes a button to create a new todo
+
+<img src="./docs/images/todos_pc.png" width="700" />
+
+### 📋 Todo List (Mobile View)
+
+- Fully responsive design
+- Optimized for single-column layout on small screens
+
+<img src="./docs/images/todos_sp.png" width="300" />
+
+### 📝 Create New Todo
+
+- Input fields for title, status, and content
+- Built-in validation for each field
+- Save button triggers the submission process
+
+<img src="./docs/images/create-todo.png" width="500" />
+
+### 🧾 Validation Errors (Create / Detail Page)
+
+- Save button triggers the submission process
+- Includes buttons to delete or save
+
+<img src="./docs/images/todo-detail.png" width="500" />
+
+### ⚠️ Validation Errors (Create / Detail Page)
+
+- Errors are shown when fields are empty or exceed length limits
+- Field-specific error messages are clearly displayed
+
+<img src="./docs/images/validation-error.png" width="500" />
+<img src="./docs/images/validation-length-error.png" width="500" />
+
+### 🗑️ Delete Confirmation Modal
+
+- Modal appears when attempting to delete a todo
+- Includes Cancel and Delete buttons
+
+<img src="./docs/images/delete-modal.png" width="500" />
+
+## 🗺️ Routing
+
+| Page        | Path         |
+| ----------- | ------------ |
+| Todo List   | `/todos`     |
+| Todo Detail | `/todos/:id` |
+| Create Todo | `/todos/new` |
+
+## 📁 Project Structure
 
 ```bash
-npm install
+app/
+├── routes/        # Routing, loaders, and actions
+├── server/        # Business logic (mock server-side)
+├── features/      # Feature-scoped UI logic and hooks
+├── utils/         # Shared utility functions
+├── schemas/       # Zod validation schemas
+├── types/         # Shared TypeScript types
+├── constants/     # Domain constants
+└── root.tsx       # Application entry point
 ```
 
-### Development
+👉 For more details: [📐 Architecture & Structure](#-architecture--project-structure)
 
-Start the development server with HMR:
+## 🧩 UI Components (Storybook)
+
+A set of reusable and purely presentational components developed with Storybook.
+
+```
+stories/
+├── button
+├── input
+├── select
+├── textarea
+├── modal
+├── toast
+├── loading
+├── status-label
+└── suspense
+```
+
+### Design Policy
+
+- Pure UI components only
+- No business logic or side effects
+- Easily testable and visually documented in Storybook
+
+## 🧰 Shared Utilities (`app/utils`)
+
+```
+utils/
+├── format-date.ts         # Format timestamps
+├── task-status.ts         # Helpers for task status labels
+├── test-router-args.ts    # Test helpers for routing
+└── *.test.ts              # Unit tests for utilities
+```
+
+## 🏗️ Architecture
+
+This app adopts **React Router’s Data Router model**, clearly separating:
+
+- 📡 Routing logic (`loader` / `action`)
+- 🧠 Business logic (`server/`)
+- 🖼️ UI logic and presentation (`features/`, `stories/`)
+
+## 📐 Architecture & Project Structure
+
+📄 English: [docs/structure.md](./docs/structure.md)
+📄 日本語: [docs/structure-ja.md](./docs/structure-ja.md)
+
+## 🚀 Getting Started
 
 ```bash
+git clone https://github.com/your-name/todo-app.git
+cd todo-app
+npm install
 npm run dev
 ```
 
-Your application will be available at `http://localhost:5173`.
-
-## Building for Production
-
-Create a production build:
+## 🧪 Running Tests
 
 ```bash
-npm run build
+npm run test
 ```
 
-## Deployment
+- Unit testing: `Vitest`
+- Component testing: `@testing-library/react`
+- Route-level loader and action tests are also implemented
 
-### Docker Deployment
+## 🔄 CI / Quality
 
-To build and run using Docker:
+- Automated testing via **GitHub Actions**
+- Tests run on every PR to prevent regressions
+- Integrated **ESLint (Flat Config)** for static code analysis in CI
+  - Applies key rules like `no-unused-vars`, `prefer-const`, `eqeqeq`, `jsx-key`, etc.
+  - Configured for **TypeScript** and **React**, with focus on reusability and maintainability
 
-```bash
-docker build -t my-app .
-
-# Run the container
-docker run -p 3000:3000 my-app
-```
-
-The containerized application can be deployed to any platform that supports Docker, including:
-
-- AWS ECS
-- Google Cloud Run
-- Azure Container Apps
-- Digital Ocean App Platform
-- Fly.io
-- Railway
-
-### DIY Deployment
-
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
+## 🧼 Running Lint (ESLint)
 
 ```
-├── package.json
-├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
-├── build/
-│   ├── client/    # Static assets
-│   └── server/    # Server-side code
+npx eslint .
 ```
 
-## Styling
+- Uses ESLint with Flat Config for both JS/TS and React
+- Linting is also executed automatically via GitHub Actions
 
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
+📄 [View ESLint Config](./eslint.config.ts)
 
----
+## 🧠 Key Concepts
 
-Built with ❤️ using React Router.
+- **🔗 Routes = HTTP Handlers**
+  `loader` / `action` return data or `Response` objects, similar to backend endpoints.
+
+- **🧩 Server Logic Isolation**
+  Business logic is placed in `app/server/` for clean separation.
+
+- **🖼️ Presentation-Only UI**
+  Reusable UI components don't include business logic or state management.
+
+### 🎨 UI Library Choice
+
+This app uses pure Tailwind CSS for all UI styling, without relying on component libraries like Mantine.
+
+While UI frameworks can speed up development, I intentionally avoided them to reduce potential risks from future breaking changes or version mismatches during upgrades. This approach improves long-term maintainability and consistency.
+
+## 🔁 Data Flow Example: `/todos/new`
+
+1. User submits the todo creation form
+2. `action` handles the POST request
+3. Calls `create-task.ts` (server logic)
+4. On success → Redirects to `/todos/:id`
+5. On failure → Returns structured validation errors to the UI
+
+## ✍️ What I Learned
+
+- Built a **React app using Remix-like architecture**
+- Implemented **server-driven data flow** with `loader` and `action`
+- Applied **separation of concerns** for scalability and clarity
+- Developed a **Storybook-driven UI system**
+- Ensured a **testable structure** with unit and integration tests
+
+## 🗺️ Figma UI Planning
+
+Before implementation, UI behavior was visualized in Figma to clarify specifications.
+
+- Defined page responsibilities and transitions
+- Mapped status color logic and button behavior
+- Designed toasts and modal flows
+
+🔗 [View the Figma design](https://www.figma.com/design/oBFz8dScJn1BJ1qdgsV4p4/TODO?node-id=0-1&t=ZTjQpuCXUlaOJeoS-1)
+
+![todo-app-flow](/docs/images/todo-app-flow.png)
+
+## 📄 Other Docs
+
+- [🧭 Architecture (EN)](./docs/structure.md)
+- [🧭 Architecture (JA)](./docs/structure-ja.md)
+- [📘 README (JA)](./docs/readme-ja.md)
