@@ -23,7 +23,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     // throw new Error("Test error");
 
     return redirect(`/todos/${task.id}?created=true`);
-  } catch (error) {
+  } catch (_error) {
     return {
       error: "Failed to create task. Please try again.",
     };

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { AppStatusLabel } from ".";
 import { TASK_STATUS } from "~/constants/tasks";
