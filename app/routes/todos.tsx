@@ -6,7 +6,7 @@ import {
   useLoaderData,
   type LoaderFunctionArgs,
 } from "react-router";
-import { getHeaderTitle } from "~/utils/routes";
+import { getHeaderTitle } from "~/utils/route-labels";
 import { PATH } from "~/constants/routes";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {

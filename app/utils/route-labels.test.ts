@@ -1,5 +1,5 @@
 import { describe, test, expect } from "vitest";
-import { getHeaderTitle } from "./routes";
+import { getHeaderTitle } from "./route-labels";
 import { ROUTE } from "~/constants/routes";
 
 describe("getHeaderTitle", () => {
