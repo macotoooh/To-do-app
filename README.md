@@ -145,7 +145,7 @@ This app adopts **React Router’s Data Router model**, clearly separating:
 ## 📐 Architecture & Project Structure
 
 📄 English: [docs/structure.md](./docs/structure.md)
-📄 日本語: [docs/structure-ja.md](./docs/structure-ja.md)
+📄 Japanese: [docs/structure-ja.md](./docs/structure-ja.md)
 
 ## 🚀 Getting Started
 
