@@ -85,16 +85,19 @@ UIコンポーネントは再利用性を重視し、Storybookで開発・管理
 
 ## 📁 ディレクトリ構成（概要）
 
-```
+```bash
 app/
-├── routes/        # ルーティング、loader、action
-├── server/        # サーバーサイドのロジック（mock）
-├── features/      # 機能別のUIロジック
-├── utils/         # ユーティリティ関数
-├── schemas/       # Zodによるバリデーション
-├── types/         # 共通の型定義
-├── constants/     # ドメイン定数
-└── root.tsx       # アプリのエントリーポイント
+├── app.css            # グローバルCSS
+├── constants/         # ドメイン定数（パスやステータス）
+├── features/          # 機能別UIロジック（components, hooks）
+├── root.tsx           # アプリのエントリーポイント
+├── routes/            # 各ページのルート・loader・action
+├── routes.ts          # ページルーティング定義（useNavigate等で使用）
+├── schemas/           # Zodによるスキーマ定義
+├── server/            # サーバー側処理（mock APIなど）
+├── setup-tests.ts     # テスト環境セットアップ（jest-domのimportなど）
+├── types/             # 共通型定義（taskなど）
+└── utils/             # ユーティリティ関数（format, route-label等）
 ```
 
 ※詳細は 👉 [📐 アーキテクチャと構成設計](#-アーキテクチャと構成設計) を参照
@@ -158,7 +161,7 @@ npm run test
 
 ## 🧼 Lintの実行（ESLint）
 
-```
+```bash
 npx eslint .
 ```
 

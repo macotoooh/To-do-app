@@ -89,14 +89,17 @@ Reusable UI components are developed and tested in **Storybook** for scalability
 
 ```bash
 app/
-├── routes/        # Routing, loaders, and actions
-├── server/        # Business logic (mock server-side)
-├── features/      # Feature-scoped UI logic and hooks
-├── utils/         # Shared utility functions
-├── schemas/       # Zod validation schemas
-├── types/         # Shared TypeScript types
-├── constants/     # Domain constants
-└── root.tsx       # Application entry point
+├── app.css            # Global CSS styles
+├── constants/         # Domain constants (e.g. paths, status)
+├── features/          # Feature-scoped UI logic (components, hooks)
+├── root.tsx           # Application entry point
+├── routes/            # Page routes with loader/action logic
+├── routes.ts          # Route path definitions for use in navigation
+├── schemas/           # Zod validation schemas
+├── server/            # Mock server-side business logic
+├── setup-tests.ts     # Test setup (e.g. importing jest-dom)
+├── types/             # Shared TypeScript types (e.g. task types)
+└── utils/             # Utility functions (formatting, route labels, etc.)
 ```
 
 👉 For more details: [📐 Architecture & Structure](#-architecture--project-structure)
@@ -105,7 +108,7 @@ app/
 
 A set of reusable and purely presentational components developed with Storybook.
 
-```
+```bash
 stories/
 ├── button
 ├── input
@@ -126,7 +129,7 @@ stories/
 
 ## 🧰 Shared Utilities (`app/utils`)
 
-```
+```bash
 utils/
 ├── format-date.ts         # Format timestamps
 ├── task-status.ts         # Helpers for task status labels
@@ -176,7 +179,7 @@ npm run test
 
 ## 🧼 Running Lint (ESLint)
 
-```
+```bash
 npx eslint .
 ```
 
