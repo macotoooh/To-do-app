@@ -5,45 +5,48 @@ By clearly separating routing, server logic, and UI responsibilities, the codeba
 
 ## 🗂️ High-Level Structure
 
-```
+```bash
 app/
-├── routes/        # Routing, loaders, actions (HTTP layer)
-├── server/        # Server-side business logic
-├── features/      # Feature-specific UI logic and hooks
-├── utils/         # Shared utility functions
-├── schemas/       # Validation schemas (Zod)
-├── types/         # Shared TypeScript type definitions
-├── constants/     # Domain constants
-└── root.tsx       # App entry point
+├── app.css           # Global styles (Tailwind CSS)
+├── constants/        # Domain constants (e.g. paths, status labels)
+├── features/         # Feature-specific UI logic (components, custom hooks)
+├── root.tsx          # App entry point
+├── routes/           # Route files (includes loader/action logic)
+├── routes.ts         # Path definitions for navigation
+├── schemas/          # Zod validation schemas
+├── server/           # Mock server-side logic
+├── setup-tests.ts    # Test setup (e.g. import testing utilities)
+├── types/            # Shared TypeScript type definitions
+└── utils/            # Utility functions (e.g. date formatter, route labels)
 ```
 
 Each directory has a **single responsibility**, which makes the code easier to understand and work with.
 
 ## 🧭 Routes (`app/routes`)
 
-```
+```bash
 routes/
 ├── index.tsx
 ├── todos.tsx              # Layout for /todos/*
 ├── todos._index.tsx       # Todo list page
 ├── todos.new.tsx          # Create todo page
 ├── todos.$id.tsx          # Todo detail page
-├── todos.test.ts
-├── todos._index.test.ts
-├── todos.new.test.ts
-└── todos.$id.test.ts
+├── todos.test.tsx
+├── todos._index.test.tsx
+├── todos.new.test.tsx
+└── todos.$id.test.tsx
 ```
 
 ### 🧪 Route Tests
 
 Each major route has a corresponding test file:
 
-```
+```bash
 routes/
-├── todos.test.ts              # Tests loader and UI for TodoLayout
-├── todos._index.test.ts       # Tests loader and UI for the todo list
-├── todos.new.test.ts          # Tests form submission, action logic, and UI
-├── todos.$id.test.ts          # Tests loader, update/delete actions, and UI
+├── todos.test.tsx              # Tests loader and UI for TodoLayout
+├── todos._index.test.tsx       # Tests loader and UI for the todo list
+├── todos.new.test.tsx          # Tests form submission, action logic, and UI
+├── todos.$id.test.tsx          # Tests loader, update/delete actions, and UI
 ```
 
 - Route tests cover:
@@ -78,16 +81,23 @@ Testing `loader` and `action` functions helps ensure:
 
 ## 🧠 Server Logic (`app/server`)
 
-```
+```bash
 server/
 └── todos/
-    ├── create-task.ts
-    ├── update-task.ts
-    ├── delete-task-by-id.ts
-    ├── get-task-by-id.ts
-    ├── get-task-list.ts
-    └── *.test.ts
+    ├── create-task.ts              # Create new task
+    ├── update-task.ts              # Update task
+    ├── delete-task-by-id.ts        # Delete task
+    ├── get-task-by-id.ts           # Get task detail
+    ├── get-task-list.ts            # Get task list
+    ├── create-task.test.ts         # Unit tests for each server function
+    ├── update-task.test.ts
+    ├── delete-task-by-id.test.ts
+    ├── get-task-by-id.test.ts
 ```
+
+- Each file defines **mock server logic** that simulates API behavior.
+- These functions are called from route `loader` / `action` to handle data.
+- Unit tests are implemented per function to ensure reliability.
 
 ### ✍️ Design Principles
 
@@ -100,22 +110,21 @@ server/
 
 ## 🎯 Features (`app/features`)
 
-```
+```bash
 features/
 └── todos/
     ├── components/
-    │   └── todo-form.tsx         // Reusable form component for both create and edit
+    │   └── todo-form.tsx        # Shared form component for both creating and editing tasks
     └── hooks/
-        ├── use-new-todo.ts       // Logic for new todo page (form handling, submission)
-        ├── use-todo-detail.ts    // Logic for detail page (delete, update handling)
-        └── use-todos-index.ts    // Logic for index page (data rendering, sorting)
-
+        ├── use-new-todo.ts       # Logic for the new task page (form control and submission)
+        ├── use-todo-detail.ts    # Logic for the detail page (form control, delete/update handling)
+        └── use-todos-index.ts    # Logic for the list page (data rendering and sorting)
 ```
 
 ### 🎨 Purpose
 
-- Encapsulate **feature-specific UI logic**
-- Custom hooks such as `useTodoDetail` and `useTodosIndex` handle:
+- **Separate and encapsulate UI logic by feature**
+- Custom hooks manage:
   - Form state
   - Submission logic
   - UI state (loading, success, errors)
@@ -124,15 +133,15 @@ This prevents route components from becoming too complex and improves reusabilit
 
 ## 🧰 Utilities (`app/utils`)
 
-```
+```bash
 utils/
-├── format-date.ts           // Formats date strings
-├── format-date.test.ts      // Unit test for date formatting
-├── task-status.ts           // Utility for task status labels and colors
+├── format-date.ts           # Formats date strings
+├── format-date.test.ts      # Unit test for date formatting
+├── task-status.ts           # Utility for task status labels and colors
 ├── task-status.test.ts
-├── route-labels.ts          // Returns screen titles based on route paths
-├── route-labels.test.ts     // Unit test for route-label logic
-├── test-router-args.ts      // Helper for testing loader/action logic
+├── route-labels.ts          # Returns screen titles based on route paths
+├── route-labels.test.ts     # Unit test for route-label logic
+├── test-router-args.ts      # Helper for testing loader/action logic
 ```
 
 - Contains pure utility functions used across the app
@@ -143,7 +152,7 @@ utils/
 
 ### Schemas (`app/schemas`)
 
-```
+```bash
 schemas/
 └── task.ts
 ```
@@ -152,33 +161,42 @@ schemas/
 
 ### Types (`app/types`)
 
-```
+```bash
 types/
 └── tasks.ts
 ```
 
-- Shared domain types used across server and UI code
+- `app/types` defines **application-specific domain types** related to business logic, such as the `Task` type.
+- These shared domain types are used across both server and client code, ensuring a consistent data model and improving maintainability.
 
 ## 🧱 UI Components (Storybook)
 
-```
+```bash
 stories/
-├── button
-├── input
-├── select
-├── textarea
-├── modal
-├── toast
-├── loading
-├── status-label
-└── suspense
+├── button/
+│ ├── index.tsx              # Main UI component
+│ ├── index.stories.tsx      # Storybook stories for visual testing
+│ ├── constants.ts           # Variants, colors, and size definitions
+│ ├── types.ts               # Component prop types
+│ └── logics.ts              # Internal UI behaviors (e.g., click handling)
+├── modal/
+│ ├── index.tsx              # Modal component
+│ └── index.stories.tsx      # Storybook stories for the modal
+├── input/                    # Text input component
+├── select/                   # Select / dropdown component
+├── textarea/                 # Multiline text input component
+├── toast/                    # Toast / notification UI
+├── loading/                  # Loading indicators (spinner, skeleton, etc.)
+├── status-label/             # Status or badge-style labels
+└── suspense/                 # Fallback UI for Suspense boundaries
 ```
 
 ### 🎨 Design Principles
 
-- UI components dedicated to rendering and visuals
-- Do not include business logic (data processing or domain rules)
-- Can be developed and tested individually in **Storybook**
+- Purely presentational UI components (no business logic)
+- Organized by role, inspired by Atomic Design principles
+- Built entirely with Tailwind CSS, without using external UI libraries (e.g., Mantine, MUI)
+- Developed and tested in isolation with Storybook
 
 ## ✅ Key Design Decisions
 
