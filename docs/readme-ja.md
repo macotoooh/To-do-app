@@ -125,8 +125,8 @@ stories/
 
 設計思想・ディレクトリ構成の詳細はこちら：
 
-📄 [docs/structure.md (English)](./docs/structure.md)
-📄 [docs/structure-ja.md (日本語)](./docs/structure-ja.md)
+📄 [docs/structure.md (English)](./structure.md)
+📄 [docs/structure-ja.md (日本語)](./structure-ja.md)
 
 ## 🚀 セットアップ
 
@@ -214,5 +214,5 @@ MantineなどのUIフレームワークを使うことで開発効率は上が�
 
 ## 📄 Other Docs
 
-- [🧭 Architecture (JA)](./docs/structure-ja.md)
-- [📘 README (JA)](README.md)
+- [🧭 Architecture (JA)](./structure-ja.md)
+- [📘 README (JA)](./readme-ja.md)
