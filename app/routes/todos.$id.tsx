@@ -1,5 +1,8 @@
 import {
+  isRouteErrorResponse,
+  Link,
   redirect,
+  useRouteError,
   type ActionFunctionArgs,
   type LoaderFunctionArgs,
 } from "react-router";
@@ -7,31 +10,43 @@ import { AppLoading } from "stories/loading";
 import { AppToast } from "stories/toast";
 import { ERROR_TOAST, SUCCESS_TOAST } from "stories/toast/constants";
 import { ACTION_INTENT, type ActionIntent } from "~/constants/tasks";
+import { ErrorState } from "~/features/todos/components/error-state";
 import { TodoForm } from "~/features/todos/components/todo-form";
 import { useTodoDetail } from "~/features/todos/hooks/use-todo-detail";
 import { deleteTaskById } from "~/server/todos/delete-task-by-id";
 import { getTaskById } from "~/server/todos/get-task-by-id";
 import { updateTask } from "~/server/todos/update-task";
+import { rethrowAsInternalError } from "~/utils/errors";
 import { getTaskStatus } from "~/utils/task-status";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   const id = params.id;
 
   if (!id) {
-    throw new Response("Not Found", { status: 404 });
+    throw new Response(null, {
+      status: 400,
+      statusText: "Task ID is required",
+    });
   }
 
-  const task = await getTaskById(id);
+  try {
+    const task = await getTaskById(id);
 
-  if (!task) {
-    throw new Response("Todo not found", { status: 404 });
+    if (!task) {
+      throw new Response(null, {
+        status: 404,
+        statusText: "Todo not found",
+      });
+    }
+
+    return {
+      ...task,
+      createdAt: task.createdAt.toISOString(),
+      updatedAt: task.updatedAt.toISOString(),
+    };
+  } catch (err) {
+    rethrowAsInternalError(err);
   }
-
-  return {
-    ...task,
-    createdAt: task.createdAt.toISOString(),
-    updatedAt: task.updatedAt.toISOString(),
-  };
 };
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -139,3 +154,19 @@ const TodoDetail = () => {
 };
 
 export default TodoDetail;
+
+export const ErrorBoundary = () => {
+  const error = useRouteError();
+
+  if (isRouteErrorResponse(error)) {
+    return (
+      <ErrorState
+        status={error.status}
+        title={error.statusText}
+        action={<Link to="/todos">Back to list</Link>}
+      />
+    );
+  }
+
+  return <ErrorState />;
+};
