@@ -1,5 +1,5 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
-import TodoDetail, { action, loader } from "./todos.$id";
+import TodoDetail, { action, ErrorBoundary, loader } from "./todos.$id";
 import * as getTaskModule from "~/server/todos/get-task-by-id";
 import { ACTION_INTENT, TASK_STATUS } from "~/constants/tasks";
 import { createActionArgs, createLoaderArgs } from "~/utils/test-router-args";
@@ -34,11 +34,11 @@ describe("todos.$id", () => {
   });
 
   describe("loader", () => {
-    test("throws 404 if no id param", async () => {
+    test("throws 400 if no id param", async () => {
       await expect(
         loader(createLoaderArgs({ params: {} }))
       ).rejects.toMatchObject({
-        status: 404,
+        status: 400,
       });
     });
 
@@ -51,6 +51,18 @@ describe("todos.$id", () => {
         loader(createLoaderArgs({ params: { id: "999" } }))
       ).rejects.toMatchObject({
         status: 404,
+      });
+    });
+
+    test("throws 500 on unexpected error", async () => {
+      vi.mocked(getTaskModule.getTaskById).mockRejectedValueOnce(
+        new Error("DB failure")
+      );
+
+      await expect(
+        loader(createLoaderArgs({ params: { id: "1" } }))
+      ).rejects.toMatchObject({
+        status: 500,
       });
     });
 
@@ -374,6 +386,31 @@ describe("todos.$id", () => {
           await screen.findByText(/Failed to delete task. Please try again./i)
         ).toBeInTheDocument();
       });
+    });
+
+    test("Displays error UI when task is not found (404)", async () => {
+      // Arrange
+      vi.mocked(getTaskModule.getTaskById).mockResolvedValueOnce(null);
+      const routes = [
+        {
+          path: "/todos/:id",
+          element: <TodoDetail />,
+          loader,
+          action,
+          errorElement: <ErrorBoundary />,
+        },
+      ];
+      const router = createMemoryRouter(routes, {
+        initialEntries: ["/todos/999"],
+      });
+      render(<RouterProvider router={router} />);
+
+      // Assert
+      expect(
+        await screen.findByRole("heading", { name: "404" })
+      ).toBeInTheDocument();
+      expect(await screen.findByText(/Back to list/i)).toBeInTheDocument();
+      expect(await screen.findByText(/Back to list/i)).toBeInTheDocument();
     });
   });
 });

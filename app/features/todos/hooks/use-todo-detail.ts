@@ -34,9 +34,9 @@ export const useTodoDetail = () => {
   const form = useForm<UpdateTaskInput>({
     resolver: zodResolver(UpdateTaskSchema),
     defaultValues: {
-      title: task.title,
-      content: task.content,
-      status: task.status,
+      title: task?.title,
+      content: task?.content,
+      status: task?.status,
     },
     mode: "onSubmit",
     reValidateMode: "onChange",
