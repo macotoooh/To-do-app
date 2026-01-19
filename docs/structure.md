@@ -114,6 +114,7 @@ server/
 features/
 └── todos/
     ├── components/
+    │   └── error-state.tsx      # Reusable UI component for displaying error states
     │   └── todo-form.tsx        # Shared form component for both creating and editing tasks
     └── hooks/
         ├── use-new-todo.ts       # Logic for the new task page (form control and submission)
@@ -135,6 +136,7 @@ This prevents route components from becoming too complex and improves reusabilit
 
 ```bash
 utils/
+├── error.ts                  # Shared utility to handle loader errors as HTTP responses (404 / 500)
 ├── format-date.ts           # Formats date strings
 ├── format-date.test.ts      # Unit test for date formatting
 ├── task-status.ts           # Utility for task status labels and colors
