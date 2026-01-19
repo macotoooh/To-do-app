@@ -205,6 +205,49 @@ This app uses pure Tailwind CSS for all UI styling, without relying on component
 
 While UI frameworks can speed up development, I intentionally avoided them to reduce potential risks from future breaking changes or version mismatches during upgrades. This approach improves long-term maintainability and consistency.
 
+## ⚠️ Error Handling Strategy
+
+This strategy helps keep error behavior predictable, testable, and aligned with user experience.
+
+This application applies different error-handling strategies depending on the responsibility and context of each route.
+
+### Loader Errors (Data Fetching)
+
+Loaders treat data-fetching failures as **HTTP-level errors**.
+
+- Loaders throw `Response` objects to represent HTTP errors
+- `404 Not Found` is used when a requested resource does not exist
+- Unexpected or system-level errors are normalized into
+  `500 Internal Server Error`
+
+A shared utility is used to preserve intentionally thrown HTTP errors
+(e.g. 404 responses), while converting unknown failures into a 500 response.
+
+### Action Errors (User Actions)
+
+Errors caused by user interactions (create, update, delete)
+are **returned as structured data**, rather than throwing `Response` objects.
+
+This allows the UI to:
+
+- Stay on the same page
+- Preserve form state
+- Display contextual feedback via toast messages
+
+This approach improves user experience by avoiding unnecessary page transitions.
+
+### Error Boundaries
+
+- Detail pages use **route-level error boundaries** to display
+  tailored error screens based on HTTP status codes (404 / 500)
+- In the case of `404` (e.g. _Todo not found_), a clear navigation path
+  back to the list page is provided
+- List pages use a generic fallback UI for system-level failures
+- Layout routes do not define custom error boundaries,
+  as they do not perform data fetching or side effects
+
+<img src="./docs/images/error-404-todo-detail.png" width="500" />
+
 ## 🔁 Data Flow Example: `/todos/new`
 
 1. User submits the todo creation form

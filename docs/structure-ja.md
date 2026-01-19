@@ -119,6 +119,7 @@ server/
 features/
 └── todos/
     ├── components/
+    │   └── error-state.tsx      # エラー状態を表示するための共通UIコンポーネント
     │   └── todo-form.tsx        # タスクの新規作成・編集に対応したフォーム
     └── hooks/
         ├── use-new-todo.ts       # 新規作成ページ用のロジック（フォーム制御・作成処理）
@@ -140,6 +141,7 @@ features/
 
 ```bash
 utils/
+├── error.ts               # loaderで発生したエラーをHTTPエラー（404 / 500）として扱うための共通関数
 ├── format-date.ts         # 日付をフォーマットする関数
 ├── format-date.test.ts    # ↑の単体テスト
 ├── task-status.ts         # ステータスの色やラベルを扱うユーティリティ
