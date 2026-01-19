@@ -1,10 +1,12 @@
-import { Link } from "react-router";
+import { isRouteErrorResponse, Link, useRouteError } from "react-router";
 import { AppStatusLabel } from "stories/status-label";
 import { AppToast } from "stories/toast";
 import { SUCCESS_TOAST } from "stories/toast/constants";
 import { useTodosIndex } from "~/features/todos/hooks/use-todos-index";
 import { formatDate } from "~/utils/format-date";
 import { getTaskList } from "~/server/todos/get-task-list";
+import { rethrowAsInternalError } from "~/utils/errors";
+import { ErrorState } from "~/features/todos/components/error-state";
 
 export const loader = async () => {
   try {
@@ -21,10 +23,7 @@ export const loader = async () => {
     }));
   } catch (error) {
     console.error("Failed to load tasks:", error);
-    throw new Response("Could not load tasks", {
-      status: 500,
-      statusText: "Internal Server Error",
-    });
+    rethrowAsInternalError(error);
   }
 };
 
@@ -82,3 +81,19 @@ export const TodosIndex = () => {
 };
 
 export default TodosIndex;
+
+export const ErrorBoundary = () => {
+  const error = useRouteError();
+
+  if (isRouteErrorResponse(error)) {
+    return (
+      <ErrorState
+        status={error.status}
+        title={error.statusText}
+        action={<Link to="/todos">Back to list</Link>}
+      />
+    );
+  }
+
+  return <ErrorState />;
+};
