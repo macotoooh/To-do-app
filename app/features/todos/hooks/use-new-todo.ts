@@ -39,13 +39,13 @@ export const useNewTodo = () => {
    *
    * @param data Validated task creation input
    */
-  const onValid = (data: CreateTaskInput) => {
+  const onValid = async (data: CreateTaskInput) => {
     const formData = new FormData();
     formData.append("title", data.title);
     formData.append("content", data.content);
     formData.append("status", data.status);
 
-    submit(formData, { method: "post" });
+    await submit(formData, { method: "post" });
   };
 
   return {

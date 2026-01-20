@@ -23,9 +23,9 @@ export const useTodosIndex = () => {
 
     setShowDeletedToast(true);
 
-    const timer = setTimeout(() => {
+    const timer = setTimeout(async () => {
       setShowDeletedToast(false);
-      navigate(".", { replace: true });
+      await navigate(".", { replace: true });
     }, 4000);
 
     return () => clearTimeout(timer);

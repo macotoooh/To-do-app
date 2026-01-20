@@ -43,7 +43,7 @@ export const useTodoDetail = () => {
   });
 
   const [showSuccess, setShowSuccess] = useState<"created" | "updated" | null>(
-    null
+    null,
   );
 
   const updated = params.get("updated") === "true";
@@ -58,14 +58,14 @@ export const useTodoDetail = () => {
    *
    * @param data Validated task creation input
    */
-  const onValid = (data: UpdateTaskInput) => {
+  const onValid = async (data: UpdateTaskInput) => {
     const formData = new FormData();
     formData.append("intent", ACTION_INTENT.UPDATE);
     formData.append("title", data.title);
     formData.append("content", data.content);
     formData.append("status", data.status);
 
-    submit(formData, { method: "put" });
+    await submit(formData, { method: "put" });
   };
 
   /**
@@ -73,11 +73,11 @@ export const useTodoDetail = () => {
    *
    * Sends a form submission with a special `deleteKey` to trigger deletion logic.
    */
-  const onDelete = () => {
+  const onDelete = async () => {
     const formData = new FormData();
     formData.append("intent", ACTION_INTENT.DELETE);
 
-    submit(formData, { method: "post" });
+    await submit(formData, { method: "post" });
   };
 
   useEffect(() => {
@@ -85,9 +85,9 @@ export const useTodoDetail = () => {
 
     setShowSuccess(created ? "created" : "updated");
 
-    const timer = setTimeout(() => {
+    const timer = setTimeout(async () => {
       setShowSuccess(null);
-      navigate(".", { replace: true });
+      await navigate(".", { replace: true });
     }, 4000);
 
     return () => clearTimeout(timer);
