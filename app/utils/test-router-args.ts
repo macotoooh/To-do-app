@@ -1,5 +1,4 @@
-import type { ActionFunctionArgs } from "react-router";
-import type { LoaderFunctionArgs } from "react-router";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 
 /**
  * Creates mock arguments for a React Router loader function.
@@ -13,7 +12,7 @@ import type { LoaderFunctionArgs } from "react-router";
  * @returns LoaderFunctionArgs for testing
  */
 export const createLoaderArgs = (
-  args: Partial<LoaderFunctionArgs>
+  args: Partial<LoaderFunctionArgs>,
 ): LoaderFunctionArgs => ({
   context: {},
   params: args.params ?? {},
@@ -35,7 +34,7 @@ export const createLoaderArgs = (
  */
 export const createActionArgs = (
   request: Request,
-  overrides?: Partial<Omit<ActionFunctionArgs, "request">>
+  overrides?: Partial<Omit<ActionFunctionArgs, "request">>,
 ): ActionFunctionArgs => ({
   request,
   params: overrides?.params ?? {},

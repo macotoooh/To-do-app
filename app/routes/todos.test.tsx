@@ -1,7 +1,6 @@
 import { describe, test, vi, beforeEach, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { loader } from "./todos";
-import TodosLayout from "./todos";
+import TodosLayout, { loader } from "./todos";
 import { createLoaderArgs } from "~/utils/test-router-args";
 import { ROUTE } from "~/constants/routes";
 import { createMemoryRouter, RouterProvider } from "react-router";
@@ -92,17 +91,17 @@ describe("TodosLayout loader", () => {
         }),
         {
           initialEntries: ["/todos/new"],
-        }
+        },
       );
 
       render(<RouterProvider router={router} />);
 
       expect(
-        await screen.findByRole("heading", { name: "Create Task" })
+        await screen.findByRole("heading", { name: "Create Task" }),
       ).toBeInTheDocument();
       expect(screen.getByLabelText("Back to Todos")).toBeInTheDocument();
       expect(
-        screen.queryByRole("button", { name: "New task" })
+        screen.queryByRole("button", { name: "New task" }),
       ).not.toBeInTheDocument();
     });
 
@@ -116,17 +115,17 @@ describe("TodosLayout loader", () => {
         }),
         {
           initialEntries: ["/todos"],
-        }
+        },
       );
 
       render(<RouterProvider router={router} />);
 
       expect(
-        await screen.findByRole("heading", { name: "Todos" })
+        await screen.findByRole("heading", { name: "Todos" }),
       ).toBeInTheDocument();
       expect(screen.queryByLabelText("Back to Todos")).not.toBeInTheDocument();
       expect(
-        screen.getByRole("button", { name: "New task" })
+        screen.getByRole("button", { name: "New task" }),
       ).toBeInTheDocument();
     });
 
@@ -140,17 +139,17 @@ describe("TodosLayout loader", () => {
         }),
         {
           initialEntries: ["/todos/:id"],
-        }
+        },
       );
 
       render(<RouterProvider router={router} />);
 
       expect(
-        await screen.findByRole("heading", { name: "Todos Detail" })
+        await screen.findByRole("heading", { name: "Todos Detail" }),
       ).toBeInTheDocument();
       expect(screen.queryByLabelText("Back to Todos")).toBeInTheDocument();
       expect(
-        screen.getByRole("button", { name: "New task" })
+        screen.getByRole("button", { name: "New task" }),
       ).toBeInTheDocument();
     });
   });

@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "app",
+    "features",
+    "components",
+    "stories",
+    ".storybook",
+    "vite.config.ts",
+    "vite.storybook.config.ts",
+    "react-router.config.ts",
+    "eslint.config.ts",
+    "vitest.config.ts"
+  ]
+}
