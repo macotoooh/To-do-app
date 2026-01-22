@@ -32,7 +32,7 @@ config ファイル同士は「同列」ではなく、**それぞれ別のツ�
 
 ## 全体像
 
-<img src="./images/config-architecture.png" width="500" />
+<img src="./images/config-architecture_ja.png" width="500" />
 
 この図では、以下の点を表しています。
 

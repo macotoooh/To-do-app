@@ -147,8 +147,14 @@ This app adopts **React Router’s Data Router model**, clearly separating:
 
 ## 📐 Architecture & Project Structure
 
-📄 English: [docs/structure.md](./docs/structure.md)
+Details about the architectural approach and directory structure can be found below:
+
+📄 English: [docs/structure.md](./docs/structure.md)  
 📄 Japanese: [docs/structure-ja.md](./docs/structure-ja.md)
+
+In addition, the relationships between configuration files used by TypeScript, ESLint, and build tools are documented here:
+
+📄 [Config Architecture Overview](./docs/config-overview.md)
 
 ## 🚀 Getting Started
 
