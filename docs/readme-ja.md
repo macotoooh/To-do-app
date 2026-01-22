@@ -131,6 +131,11 @@ stories/
 📄 [docs/structure.md (English)](./structure.md)
 📄 [docs/structure-ja.md (日本語)](./structure-ja.md)
 
+また、TypeScript / ESLint / Build ツール間の設定関係については、
+以下のドキュメントにまとめています。
+
+📄 [Config ファイルの関係性](./config-overview-ja.md)
+
 ## 🚀 セットアップ
 
 ```bash
