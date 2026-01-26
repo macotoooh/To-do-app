@@ -42,3 +42,10 @@ export const Danger: Story = {
     color: BUTTON_VARIANT.danger,
   },
 };
+
+export const Outline: Story = {
+  args: {
+    children: "outline",
+    color: BUTTON_VARIANT.outline,
+  },
+};
