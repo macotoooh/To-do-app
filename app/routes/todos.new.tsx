@@ -6,18 +6,35 @@ import { AppLoading } from "stories/loading";
 import { AppToast } from "stories/toast";
 import { ERROR_TOAST } from "stories/toast/constants";
 import { TodoForm } from "~/features/todos/components/todo-form";
+import { CreateTaskSchema } from "~/schemas/task";
+import { TASK_STATUS } from "~/constants/tasks";
+import { AppButton } from "stories/button";
+import { BUTTON_VARIANT } from "stories/button/constants";
+import { AISuggestions } from "~/features/todos/components/ai-suggestions";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   try {
     const formData = await request.formData();
 
-    const data = {
-      title: String(formData.get("title")),
-      content: String(formData.get("content")),
+    const payload = CreateTaskSchema.parse({
+      title: formData.get("title"),
+      content: formData.get("content") || undefined,
       status: getTaskStatus(formData.get("status")),
-    };
+      aiSuggestions: formData.getAll("aiSuggestions"),
+    });
+    const task = await createTask({
+      title: payload.title,
+      content: payload.content ?? undefined,
+      status: payload.status,
+    });
 
-    const task = await createTask(data);
+    for (const suggestion of payload.aiSuggestions ?? []) {
+      await createTask({
+        title: suggestion,
+        status: TASK_STATUS.TODO,
+        content: undefined,
+      });
+    }
 
     // Intentionally throw an error to test error handling UI
     // throw new Error("Test error");
@@ -47,6 +64,7 @@ const NewTodo = () => {
     isSubmitting,
     onValid,
     error,
+    fetcher,
   } = useNewTodo();
 
   if (isSubmitting) {
@@ -63,9 +81,33 @@ const NewTodo = () => {
         contentName="content"
         errors={errors}
         onSubmit={handleSubmit(onValid)}
-        isSubmitting={isSubmitting}
         statusValue={watch("status")}
-      />
+      >
+        <div className="flex gap-x-2 justify-end pt-4">
+          <AppButton
+            type="button"
+            color={BUTTON_VARIANT.outline}
+            disabled={!watch("title")}
+            onClick={async () => {
+              await fetcher.submit(
+                { title: watch("title") },
+                { method: "post", action: "suggest-ai" },
+              );
+            }}
+          >
+            🤖 Generate task ideas with AI
+          </AppButton>
+          <AppButton
+            color={BUTTON_VARIANT.primary}
+            type="submit"
+            disabled={isSubmitting}
+          >
+            Save
+          </AppButton>
+        </div>
+      </TodoForm>
+
+      <AISuggestions control={control} name="aiSuggestions" fetcher={fetcher} />
     </>
   );
 };

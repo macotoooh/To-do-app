@@ -5,7 +5,7 @@ export type TaskStatus = (typeof TASK_STATUS)[keyof typeof TASK_STATUS];
 export type Task = {
   id: string;
   title: string;
-  content: string;
+  content?: string;
   status: TaskStatus;
   createdAt: Date;
   updatedAt: Date;

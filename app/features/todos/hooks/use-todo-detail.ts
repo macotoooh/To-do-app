@@ -3,9 +3,11 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
   useActionData,
+  useFetcher,
   useLoaderData,
   useNavigate,
   useNavigation,
+  useParams,
   useSearchParams,
   useSubmit,
 } from "react-router";
@@ -13,6 +15,7 @@ import { ACTION_INTENT } from "~/constants/tasks";
 import type { loader } from "~/routes/todos.$id";
 import { UpdateTaskSchema, type UpdateTaskInput } from "~/schemas/task";
 import type { ActionData } from "~/types/tasks";
+import { useDisclosure } from "./use-disclosure";
 
 /**
  * Hook for the todo detail page.
@@ -27,6 +30,9 @@ export const useTodoDetail = () => {
   const submit = useSubmit();
   const navigate = useNavigate();
   const [params] = useSearchParams();
+  const { id } = useParams();
+  const fetcher = useFetcher<{ suggestions: string[] }>();
+  const { isOpen, open, close } = useDisclosure();
 
   const task = useLoaderData<typeof loader>();
   const actionData = useActionData<ActionData>();
@@ -62,8 +68,15 @@ export const useTodoDetail = () => {
     const formData = new FormData();
     formData.append("intent", ACTION_INTENT.UPDATE);
     formData.append("title", data.title);
-    formData.append("content", data.content);
     formData.append("status", data.status);
+    if (data.content) {
+      formData.append("content", data.content);
+    }
+    if (data.aiSuggestions) {
+      for (const suggestion of data.aiSuggestions ?? []) {
+        formData.append("aiSuggestions", suggestion);
+      }
+    }
 
     await submit(formData, { method: "put" });
   };
@@ -98,7 +111,12 @@ export const useTodoDetail = () => {
     isSubmitting,
     onValid,
     showSuccess,
-    error: actionData?.error,
+    actionData,
     onDelete,
+    id,
+    fetcher,
+    isOpen,
+    open,
+    close,
   };
 };
