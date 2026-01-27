@@ -15,7 +15,7 @@ import { ACTION_INTENT } from "~/constants/tasks";
 import type { loader } from "~/routes/todos.$id";
 import { UpdateTaskSchema, type UpdateTaskInput } from "~/schemas/task";
 import type { ActionData } from "~/types/tasks";
-import { useDisclosure } from "./use-disclosure";
+import { useDisclosure } from "./common/use-disclosure";
 
 /**
  * Hook for the todo detail page.
