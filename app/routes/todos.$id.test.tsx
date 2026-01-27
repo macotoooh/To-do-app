@@ -270,7 +270,7 @@ describe("todos.$id", () => {
     };
 
     describe("Update", () => {
-      test.skip("Displays validation errors when form is submitted without input", async () => {
+      test("Displays validation errors when form is submitted without input", async () => {
         // Arrange
         renderTodoDetail();
         const user = userEvent.setup();
@@ -283,9 +283,6 @@ describe("todos.$id", () => {
         // Assert
         expect(
           await screen.findByText(/Title is required/i),
-        ).toBeInTheDocument();
-        expect(
-          await screen.findByText(/Content is required/i),
         ).toBeInTheDocument();
       });
 

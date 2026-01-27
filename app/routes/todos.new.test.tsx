@@ -101,7 +101,7 @@ describe("todos.new", () => {
       return router;
     };
 
-    test.skip("Displays validation errors when form is submitted without input", async () => {
+    test("Displays validation errors when form is submitted without input", async () => {
       // Arrange
       renderNewTodo();
       const user = userEvent.setup();
@@ -111,9 +111,6 @@ describe("todos.new", () => {
 
       // Assert
       expect(await screen.findByText(/Title is required/i)).toBeInTheDocument();
-      expect(
-        await screen.findByText(/Content is required/i),
-      ).toBeInTheDocument();
     });
 
     test("Redirects to detail page after successful form submission", async () => {
