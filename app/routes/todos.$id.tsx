@@ -115,6 +115,9 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
           });
         }
 
+        if (payload.aiSuggestions && payload.aiSuggestions.length > 0) {
+          return redirect(`/todos/${task.id}?updated=true&ai=true`);
+        }
         // Intentionally throw an error to test error handling UI
         // throw new Error("Test error");
         return redirect(`/todos/${task.id}?updated=true`);
@@ -148,10 +151,12 @@ const TodoDetail = () => {
     actionData,
     onDelete,
     fetcher,
-    id,
     isOpen,
     open,
     close,
+    showAISuggestions,
+    successMessage,
+    handleGenerateAISuggestions,
   } = useTodoDetail();
 
   if (isSubmitting) {
@@ -161,11 +166,7 @@ const TodoDetail = () => {
   return (
     <>
       {showSuccess && (
-        <AppToast variant={SUCCESS_TOAST}>
-          {showSuccess === "created"
-            ? "Todo created successfully."
-            : "Update completed successfully."}
-        </AppToast>
+        <AppToast variant={SUCCESS_TOAST}>{successMessage}</AppToast>
       )}
       {actionData?.error && (
         <AppToast variant={ERROR_TOAST}>{actionData.error}</AppToast>
@@ -185,10 +186,7 @@ const TodoDetail = () => {
             color={BUTTON_VARIANT.outline}
             disabled={!watch("title")}
             onClick={async () => {
-              await fetcher.submit(
-                { title: watch("title") },
-                { method: "post", action: `/todos/${id}/suggest-ai` },
-              );
+              await handleGenerateAISuggestions();
             }}
           >
             🤖 Generate task ideas with AI
@@ -210,9 +208,13 @@ const TodoDetail = () => {
           </AppButton>
         </div>
       </TodoForm>
-      {/* TODO: After clicking Save, hide AISuggestions when the save succeeds */}
-      {/* TODO: Review and refine the toast message shown after saving */}
-      <AISuggestions control={control} name="aiSuggestions" fetcher={fetcher} />
+      {showAISuggestions && (
+        <AISuggestions
+          control={control}
+          name="aiSuggestions"
+          fetcher={fetcher}
+        />
+      )}
 
       {isOpen && (
         <AppModal

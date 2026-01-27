@@ -34,6 +34,8 @@ export const useTodoDetail = () => {
   const fetcher = useFetcher<{ suggestions: string[] }>();
   const { isOpen, open, close } = useDisclosure();
 
+  const [showAISuggestions, setShowAISuggestions] = useState(true);
+
   const task = useLoaderData<typeof loader>();
   const actionData = useActionData<ActionData>();
 
@@ -54,7 +56,23 @@ export const useTodoDetail = () => {
 
   const updated = params.get("updated") === "true";
   const created = params.get("created") === "true";
+
+  // Indicates whether AI-generated suggestions were saved.
+  // This flag comes from the URL (`ai=true`) after a successful action and is used to customize the success toast message.
+  const aiCreated = params.get("ai") === "true";
+
   const isSubmitting = navigation.state === "submitting";
+
+  /**
+   * Called when the "Generate task ideas with AI" button is clicked.
+   */
+  const handleGenerateAISuggestions = async () => {
+    setShowAISuggestions(true);
+    await fetcher.submit(
+      { title: form.watch("title") },
+      { method: "post", action: `/todos/${id}/suggest-ai` },
+    );
+  };
 
   /**
    * Called when form validation succeeds.
@@ -93,10 +111,34 @@ export const useTodoDetail = () => {
     await submit(formData, { method: "post" });
   };
 
+  /**
+   * Determines the success toast message based on the action result.
+   *
+   * - Differentiates between create and update actions
+   * - Adds context when AI-generated suggestions were applied
+   */
+  const successMessage = (() => {
+    if (showSuccess === "created") {
+      return aiCreated
+        ? "Todo created successfully. AI suggestions were added."
+        : "Todo created successfully.";
+    }
+
+    if (aiCreated) {
+      return "Task updated successfully. AI suggestions were added.";
+    }
+
+    return "Update completed successfully.";
+  })();
+
   useEffect(() => {
     if (!updated && !created) return;
 
     setShowSuccess(created ? "created" : "updated");
+    setShowAISuggestions(false);
+    // Reset AI suggestions after a successful submission
+    // to prevent them from affecting subsequent updates.
+    form.setValue("aiSuggestions", []);
 
     const timer = setTimeout(async () => {
       setShowSuccess(null);
@@ -104,7 +146,7 @@ export const useTodoDetail = () => {
     }, 4000);
 
     return () => clearTimeout(timer);
-  }, [updated, created, navigate]);
+  }, [updated, created, navigate, form]);
 
   return {
     form,
@@ -113,10 +155,12 @@ export const useTodoDetail = () => {
     showSuccess,
     actionData,
     onDelete,
-    id,
     fetcher,
     isOpen,
     open,
     close,
+    showAISuggestions,
+    successMessage,
+    handleGenerateAISuggestions,
   };
 };
