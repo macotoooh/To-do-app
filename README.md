@@ -77,6 +77,25 @@ Reusable UI components are developed and tested in **Storybook** for scalability
 
 <img src="./docs/images/delete-modal.png" width="500" />
 
+### 🤖 AI-assisted Task Suggestions
+
+On both the create and detail pages, you can generate task ideas using AI
+based on the current todo title.
+
+- Generate AI-powered task suggestions with a single click
+- AI suggests related or follow-up tasks based on the title
+- Select suggestions and save them as new todos
+- Clear toast feedback is shown when AI-generated tasks are successfully added
+
+This feature helps users break down tasks and think about next actions more easily.
+
+<img src="./docs/images/ai-thinking.png" width="500" />
+<img src="./docs/images/ai-suggestions.png" width="500" />
+
+AI features are implemented using React Router actions.
+All OpenAI API calls are executed on the server side to ensure
+that API keys are never exposed to the client.
+
 ## 🗺️ Routing
 
 | Page        | Path         |

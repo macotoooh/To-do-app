@@ -119,9 +119,11 @@ server/
 features/
 └── todos/
     ├── components/
-    │   └── error-state.tsx      # エラー状態を表示するための共通UIコンポーネント
+    │   ├── error-state.tsx      # エラー状態を表示するための共通UIコンポーネント
     │   └── todo-form.tsx        # タスクの新規作成・編集に対応したフォーム
     └── hooks/
+        ├── common/
+        │   └── use-disclosure.ts # モーダル・ダイアログ用の汎用 open / close 管理 hook
         ├── use-new-todo.ts       # 新規作成ページ用のロジック（フォーム制御・作成処理）
         ├── use-todo-detail.ts    # 詳細ページ用のロジック（フォーム制御・削除・更新処理）
         └── use-todos-index.ts    # 一覧ページ用のロジック（データ表示・並び替えなど）
