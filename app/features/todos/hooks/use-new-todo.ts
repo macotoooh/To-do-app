@@ -1,6 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useActionData, useNavigation, useSubmit } from "react-router";
+import {
+  useActionData,
+  useFetcher,
+  useNavigation,
+  useSubmit,
+} from "react-router";
 import { TASK_STATUS } from "~/constants/tasks";
 import { CreateTaskSchema, type CreateTaskInput } from "~/schemas/task";
 import type { ActionData } from "~/types/tasks";
@@ -16,6 +21,7 @@ import type { ActionData } from "~/types/tasks";
 export const useNewTodo = () => {
   const navigation = useNavigation();
   const submit = useSubmit();
+  const fetcher = useFetcher<{ suggestions: string[] }>();
 
   const form = useForm<CreateTaskInput>({
     resolver: zodResolver(CreateTaskSchema),
@@ -23,6 +29,7 @@ export const useNewTodo = () => {
       title: "",
       content: "",
       status: TASK_STATUS.TODO,
+      aiSuggestions: [],
     },
     mode: "onSubmit",
     reValidateMode: "onChange",
@@ -42,8 +49,15 @@ export const useNewTodo = () => {
   const onValid = async (data: CreateTaskInput) => {
     const formData = new FormData();
     formData.append("title", data.title);
-    formData.append("content", data.content);
     formData.append("status", data.status);
+    if (data.content) {
+      formData.append("content", data.content);
+    }
+    if (data.aiSuggestions) {
+      for (const suggestion of data.aiSuggestions ?? []) {
+        formData.append("aiSuggestions", suggestion);
+      }
+    }
 
     await submit(formData, { method: "post" });
   };
@@ -53,5 +67,6 @@ export const useNewTodo = () => {
     isSubmitting,
     onValid,
     error: actionData?.error,
+    fetcher,
   };
 };

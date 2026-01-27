@@ -31,7 +31,7 @@ export const AppCheckbox = <T extends FieldValues>({
 
   return (
     <div className="space-y-2">
-      <div className="space-y-1">
+      <div className="space-y-3">
         {options.map((opt) => {
           const checked = values.includes(opt.value);
 
