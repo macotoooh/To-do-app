@@ -3,19 +3,19 @@ import { describe, test, expect } from "vitest";
 import { AISuggestions } from "./ai-suggestions";
 import type { FetcherWithComponents } from "react-router";
 
-const createMockFetcher = (
-  overrides?: Partial<FetcherWithComponents<{ suggestions: string[] }>>,
-): FetcherWithComponents<{ suggestions: string[] }> =>
-  ({
-    state: "idle",
-    data: undefined,
-    ...overrides,
-  }) as FetcherWithComponents<{ suggestions: string[] }>;
+vi.mock("stories/checkbox", () => ({
+  AppCheckbox: () => <></>,
+}));
 
 describe("AISuggestions", () => {
-  vi.mock("stories/checkbox", () => ({
-    AppCheckbox: () => <></>,
-  }));
+  const createMockFetcher = (
+    overrides?: Partial<FetcherWithComponents<{ suggestions: string[] }>>,
+  ): FetcherWithComponents<{ suggestions: string[] }> =>
+    ({
+      state: "idle",
+      data: undefined,
+      ...overrides,
+    }) as FetcherWithComponents<{ suggestions: string[] }>;
 
   test("shows loading state while submitting", () => {
     const loadingFetcher = createMockFetcher({
