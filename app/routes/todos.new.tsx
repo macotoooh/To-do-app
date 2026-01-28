@@ -39,6 +39,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     // Intentionally throw an error to test error handling UI
     // throw new Error("Test error");
 
+    if (payload.aiSuggestions && payload.aiSuggestions.length > 0) {
+      return redirect(`/todos/${task.id}?created=true&ai=true`);
+    }
+
     return redirect(`/todos/${task.id}?created=true`);
   } catch (_error) {
     return {
