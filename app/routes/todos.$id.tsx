@@ -6,18 +6,27 @@ import {
   type ActionFunctionArgs,
   type LoaderFunctionArgs,
 } from "react-router";
+import { AppButton } from "stories/button";
+import { BUTTON_VARIANT } from "stories/button/constants";
 import { AppLoading } from "stories/loading";
+import { AppModal } from "stories/modal";
 import { AppToast } from "stories/toast";
 import { ERROR_TOAST, SUCCESS_TOAST } from "stories/toast/constants";
-import { ACTION_INTENT, type ActionIntent } from "~/constants/tasks";
+import {
+  ACTION_INTENT,
+  TASK_STATUS,
+  type ActionIntent,
+} from "~/constants/tasks";
+import { AISuggestions } from "~/features/todos/components/ai-suggestions";
 import { ErrorState } from "~/features/todos/components/error-state";
 import { TodoForm } from "~/features/todos/components/todo-form";
 import { useTodoDetail } from "~/features/todos/hooks/use-todo-detail";
+import { UpdateTaskSchema } from "~/schemas/task";
+import { createTask } from "~/server/todos/create-task";
 import { deleteTaskById } from "~/server/todos/delete-task-by-id";
 import { getTaskById } from "~/server/todos/get-task-by-id";
 import { updateTask } from "~/server/todos/update-task";
 import { rethrowAsInternalError } from "~/utils/errors";
-import { getTaskStatus } from "~/utils/task-status";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   const id = params.id;
@@ -83,13 +92,32 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     }
     case ACTION_INTENT.UPDATE: {
       try {
+        const payload = UpdateTaskSchema.parse({
+          title: formData.get("title"),
+          content: formData.get("content") || undefined,
+          status: formData.get("status"),
+          aiSuggestions: formData.getAll("aiSuggestions"),
+        });
         const data = {
           id,
-          title: String(formData.get("title")),
-          content: String(formData.get("content")),
-          status: getTaskStatus(formData.get("status")),
+          title: payload.title,
+          content: payload.content,
+          status: payload.status,
         };
+
         const task = await updateTask(data);
+
+        for (const suggestion of payload.aiSuggestions ?? []) {
+          await createTask({
+            title: suggestion,
+            status: TASK_STATUS.TODO,
+            content: undefined,
+          });
+        }
+
+        if (payload.aiSuggestions && payload.aiSuggestions.length > 0) {
+          return redirect(`/todos/${task.id}?updated=true&ai=true`);
+        }
         // Intentionally throw an error to test error handling UI
         // throw new Error("Test error");
         return redirect(`/todos/${task.id}?updated=true`);
@@ -120,8 +148,15 @@ const TodoDetail = () => {
     isSubmitting,
     onValid,
     showSuccess,
-    error,
+    actionData,
     onDelete,
+    fetcher,
+    isOpen,
+    open,
+    close,
+    showAISuggestions,
+    successMessage,
+    handleGenerateAISuggestions,
   } = useTodoDetail();
 
   if (isSubmitting) {
@@ -131,13 +166,11 @@ const TodoDetail = () => {
   return (
     <>
       {showSuccess && (
-        <AppToast variant={SUCCESS_TOAST}>
-          {showSuccess === "created"
-            ? "Todo created successfully."
-            : "Update completed successfully."}
-        </AppToast>
+        <AppToast variant={SUCCESS_TOAST}>{successMessage}</AppToast>
       )}
-      {error && <AppToast variant={ERROR_TOAST}>{error}</AppToast>}
+      {actionData?.error && (
+        <AppToast variant={ERROR_TOAST}>{actionData.error}</AppToast>
+      )}
       <TodoForm
         control={control}
         titleName="title"
@@ -145,10 +178,57 @@ const TodoDetail = () => {
         contentName="content"
         errors={errors}
         onSubmit={handleSubmit(onValid)}
-        isSubmitting={isSubmitting}
         statusValue={watch("status")}
-        onDelete={onDelete}
-      />
+      >
+        <div className="flex gap-x-2 justify-end pt-4">
+          <AppButton
+            type="button"
+            color={BUTTON_VARIANT.outline}
+            disabled={!watch("title")}
+            onClick={async () => {
+              await handleGenerateAISuggestions();
+            }}
+          >
+            🤖 Generate task ideas with AI
+          </AppButton>
+          <AppButton
+            type="button"
+            color={BUTTON_VARIANT.danger}
+            onClick={() => open()}
+            testId="open-delete-modal"
+          >
+            Delete
+          </AppButton>
+          <AppButton
+            color={BUTTON_VARIANT.primary}
+            type="submit"
+            disabled={isSubmitting}
+          >
+            Save
+          </AppButton>
+        </div>
+      </TodoForm>
+      {showAISuggestions && (
+        <AISuggestions
+          control={control}
+          name="aiSuggestions"
+          fetcher={fetcher}
+        />
+      )}
+
+      {isOpen && (
+        <AppModal
+          title="Delete this item?"
+          confirmLabel="Delete"
+          cancelLabel="Cancel"
+          onConfirm={async () => {
+            await onDelete();
+          }}
+          onCancel={() => {
+            close();
+          }}
+        />
+      )}
     </>
   );
 };
@@ -157,7 +237,6 @@ export default TodoDetail;
 
 export const ErrorBoundary = () => {
   const error = useRouteError();
-
   if (isRouteErrorResponse(error)) {
     return (
       <ErrorState

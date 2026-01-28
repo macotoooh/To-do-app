@@ -114,9 +114,11 @@ server/
 features/
 └── todos/
     ├── components/
-    │   └── error-state.tsx      # Reusable UI component for displaying error states
-    │   └── todo-form.tsx        # Shared form component for both creating and editing tasks
+    │   ├── error-state.tsx       # Reusable UI component for displaying error states
+    │   └── todo-form.tsx         # Shared form component for both creating and editing tasks
     └── hooks/
+        ├── common/
+        │   └── use-disclosure.ts # Shared hook for managing open/close state (e.g. modals, dialogs)
         ├── use-new-todo.ts       # Logic for the new task page (form control and submission)
         ├── use-todo-detail.ts    # Logic for the detail page (form control, delete/update handling)
         └── use-todos-index.ts    # Logic for the list page (data rendering and sorting)

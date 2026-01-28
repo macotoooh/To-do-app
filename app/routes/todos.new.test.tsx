@@ -66,7 +66,7 @@ describe("todos.new", () => {
       if (response instanceof Response) {
         expect(response.status).toBe(302);
         expect(response.headers.get("Location")).toBe(
-          "/todos/1-1-1-1-1?created=true"
+          "/todos/1-1-1-1-1?created=true",
         );
       }
     });
@@ -111,9 +111,6 @@ describe("todos.new", () => {
 
       // Assert
       expect(await screen.findByText(/Title is required/i)).toBeInTheDocument();
-      expect(
-        await screen.findByText(/Content is required/i)
-      ).toBeInTheDocument();
     });
 
     test("Redirects to detail page after successful form submission", async () => {
@@ -134,7 +131,7 @@ describe("todos.new", () => {
       await user.type(screen.getByLabelText(/content/i), "Test content");
       await user.selectOptions(
         screen.getByLabelText(/status/i),
-        TASK_STATUS.TODO
+        TASK_STATUS.TODO,
       );
       await user.click(screen.getByRole("button", { name: /save/i }));
 
@@ -156,13 +153,13 @@ describe("todos.new", () => {
       await user.type(screen.getByLabelText(/content/i), "Test content");
       await user.selectOptions(
         screen.getByLabelText(/status/i),
-        TASK_STATUS.DOING
+        TASK_STATUS.DOING,
       );
       await user.click(screen.getByRole("button", { name: /save/i }));
 
       // Assert
       expect(
-        await screen.findByText(/Failed to create task. Please try again./i)
+        await screen.findByText(/Failed to create task. Please try again./i),
       ).toBeInTheDocument();
     });
   });

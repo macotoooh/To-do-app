@@ -36,7 +36,7 @@ describe("todos.$id", () => {
   describe("loader", () => {
     test("throws 400 if no id param", async () => {
       await expect(
-        loader(createLoaderArgs({ params: {} }))
+        loader(createLoaderArgs({ params: {} })),
       ).rejects.toMatchObject({
         status: 400,
       });
@@ -48,7 +48,7 @@ describe("todos.$id", () => {
 
       // Assert
       await expect(
-        loader(createLoaderArgs({ params: { id: "999" } }))
+        loader(createLoaderArgs({ params: { id: "999" } })),
       ).rejects.toMatchObject({
         status: 404,
       });
@@ -56,11 +56,11 @@ describe("todos.$id", () => {
 
     test("throws 500 on unexpected error", async () => {
       vi.mocked(getTaskModule.getTaskById).mockRejectedValueOnce(
-        new Error("DB failure")
+        new Error("DB failure"),
       );
 
       await expect(
-        loader(createLoaderArgs({ params: { id: "1" } }))
+        loader(createLoaderArgs({ params: { id: "1" } })),
       ).rejects.toMatchObject({
         status: 500,
       });
@@ -129,7 +129,7 @@ describe("todos.$id", () => {
         const result = await action(
           createActionArgs(request, {
             params: { id: "1" },
-          })
+          }),
         );
 
         // Assert
@@ -143,7 +143,7 @@ describe("todos.$id", () => {
       test("returns error when task is not found or already deleted", async () => {
         // Arrange
         vi.mocked(deleteTaskById).mockRejectedValueOnce(
-          new Error("Delete failed")
+          new Error("Delete failed"),
         );
         const formData = getFormData(ACTION_INTENT.DELETE);
         const request = new Request("http://localhost/todos/1", {
@@ -155,7 +155,7 @@ describe("todos.$id", () => {
         const result = await action(
           createActionArgs(request, {
             params: { id: "999" },
-          })
+          }),
         );
 
         // Assert
@@ -176,13 +176,13 @@ describe("todos.$id", () => {
 
         // Act
         const response = await action(
-          createActionArgs(request, { params: { id: "1" } })
+          createActionArgs(request, { params: { id: "1" } }),
         );
 
         // Assert
         expect(response).toBeInstanceOf(Response);
         expect((response as Response).headers.get("Location")).toBe(
-          "/todos?deleted=true"
+          "/todos?deleted=true",
         );
       });
     });
@@ -201,7 +201,7 @@ describe("todos.$id", () => {
         const result = await action(
           createActionArgs(request, {
             params: { id: "1" },
-          })
+          }),
         );
 
         expect(result).toEqual({
@@ -228,14 +228,14 @@ describe("todos.$id", () => {
         const response = await action(
           createActionArgs(request, {
             params: { id: "6" },
-          })
+          }),
         );
 
         // Assert
         if (response instanceof Response) {
           expect(response.status).toBe(302);
           expect(response.headers.get("Location")).toBe(
-            "/todos/6?updated=true"
+            "/todos/6?updated=true",
           );
         }
       });
@@ -282,10 +282,7 @@ describe("todos.$id", () => {
 
         // Assert
         expect(
-          await screen.findByText(/Title is required/i)
-        ).toBeInTheDocument();
-        expect(
-          await screen.findByText(/Content is required/i)
+          await screen.findByText(/Title is required/i),
         ).toBeInTheDocument();
       });
 
@@ -303,21 +300,21 @@ describe("todos.$id", () => {
         // Action
         await user.type(
           await screen.findByLabelText(/title/i),
-          "update Test Task"
+          "update Test Task",
         );
         await user.type(
           await screen.findByLabelText(/content/i),
-          "update Test content"
+          "update Test content",
         );
         await user.selectOptions(
           await screen.findByLabelText(/status/i),
-          TASK_STATUS.DOING
+          TASK_STATUS.DOING,
         );
         await user.click(await screen.findByRole("button", { name: /save/i }));
 
         // Assert
         expect(
-          await screen.findByText(/Update completed successfully./i)
+          await screen.findByText(/Update completed successfully./i),
         ).toBeInTheDocument();
       });
 
@@ -332,7 +329,7 @@ describe("todos.$id", () => {
 
         // Assert
         expect(
-          await screen.findByText(/Failed to update task. Please try again./i)
+          await screen.findByText(/Failed to update task. Please try again./i),
         ).toBeInTheDocument();
       });
     });
@@ -366,14 +363,14 @@ describe("todos.$id", () => {
         await user.click(await screen.findByTestId("confirm-delete-modal"));
         // Assert
         expect(
-          await screen.findByText(/Task not found or already deleted./i)
+          await screen.findByText(/Task not found or already deleted./i),
         ).toBeInTheDocument();
       });
 
       test("Displays toast when the deletion fails", async () => {
         // Arrange
         vi.mocked(deleteTaskById).mockRejectedValueOnce(
-          new Error("Delete failed")
+          new Error("Delete failed"),
         );
         const user = userEvent.setup();
         renderTodoDetail();
@@ -383,7 +380,7 @@ describe("todos.$id", () => {
         await user.click(await screen.findByTestId("confirm-delete-modal"));
         // Assert
         expect(
-          await screen.findByText(/Failed to delete task. Please try again./i)
+          await screen.findByText(/Failed to delete task. Please try again./i),
         ).toBeInTheDocument();
       });
     });
@@ -407,7 +404,7 @@ describe("todos.$id", () => {
 
       // Assert
       expect(
-        await screen.findByRole("heading", { name: "404" })
+        await screen.findByRole("heading", { name: "404" }),
       ).toBeInTheDocument();
       expect(await screen.findByText(/Back to list/i)).toBeInTheDocument();
       expect(await screen.findByText(/Back to list/i)).toBeInTheDocument();
