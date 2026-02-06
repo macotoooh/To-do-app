@@ -12,3 +12,5 @@ export const ACTION_INTENT = {
 } as const;
 
 export type ActionIntent = "UPDATE" | "DELETE";
+
+export const TASK_STATUS_VALUES = Object.values(TASK_STATUS);
