@@ -158,6 +158,9 @@ const TodoDetail = () => {
     successMessage,
     handleGenerateAISuggestions,
   } = useTodoDetail();
+  const title = watch("title");
+  const isSuggesting = fetcher.state === "submitting";
+  const canSuggest = title.trim().length > 0;
 
   if (isSubmitting) {
     return <AppLoading />;
@@ -184,12 +187,12 @@ const TodoDetail = () => {
           <AppButton
             type="button"
             color={BUTTON_VARIANT.outline}
-            disabled={!watch("title")}
+            disabled={!canSuggest || isSuggesting}
             onClick={async () => {
               await handleGenerateAISuggestions();
             }}
           >
-            🤖 Generate task ideas with AI
+            {isSuggesting ? "🤖 Generating..." : "🤖 Generate task ideas with AI"}
           </AppButton>
           <AppButton
             type="button"
