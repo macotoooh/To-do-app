@@ -5,6 +5,8 @@ type AppSummaryCardProps = {
   label: string;
   value: number;
   variant?: SummaryCardVariant;
+  isActive?: boolean;
+  onClick?: () => void;
 };
 
 /**
@@ -13,11 +15,15 @@ type AppSummaryCardProps = {
  * @param label - Metric label
  * @param value - Metric value
  * @param variant - Color style variant
+ * @param isActive - Whether the card is currently selected
+ * @param onClick - Optional click handler to make the card interactive
  */
 export const AppSummaryCard = ({
   label,
   value,
   variant = SUMMARY_CARD_VARIANT.neutral,
+  isActive = false,
+  onClick,
 }: AppSummaryCardProps) => {
   const variantToClass = {
     [SUMMARY_CARD_VARIANT.neutral]: {
@@ -43,11 +49,28 @@ export const AppSummaryCard = ({
   };
 
   const style = variantToClass[variant];
+  const baseClass = `rounded-md p-3 ${style.container} ${
+    isActive ? "ring-2 ring-form-border" : "ring-1 ring-transparent"
+  }`;
+
+  if (!onClick) {
+    return (
+      <div className={baseClass}>
+        <p className={`text-xs ${style.label}`}>{label}</p>
+        <p className={`text-2xl font-bold ${style.value}`}>{value}</p>
+      </div>
+    );
+  }
 
   return (
-    <div className={`rounded-md p-3 ${style.container}`}>
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={isActive}
+      className={`${baseClass} w-full cursor-pointer text-left transition-opacity hover:opacity-90`}
+    >
       <p className={`text-xs ${style.label}`}>{label}</p>
       <p className={`text-2xl font-bold ${style.value}`}>{value}</p>
-    </div>
+    </button>
   );
 };

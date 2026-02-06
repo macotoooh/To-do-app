@@ -1,6 +1,22 @@
 import { describe, test, expect } from "vitest";
-import { getTaskStatus } from "./task-status";
+import { getTaskStatus, isTaskStatus } from "./task-status";
 import { TASK_STATUS } from "~/constants/tasks";
+
+describe("isTaskStatus", () => {
+  test.each([TASK_STATUS.TODO, TASK_STATUS.DOING, TASK_STATUS.DONE])(
+    "returns true for %s",
+    (status) => {
+      expect(isTaskStatus(status)).toBe(true);
+    }
+  );
+
+  test.each(["INVALID", "", undefined, null, 123, {}, []])(
+    "returns false for invalid value: %p",
+    (value) => {
+      expect(isTaskStatus(value)).toBe(false);
+    }
+  );
+});
 
 describe("getTaskStatus", () => {
   const errorMessage = "Invalid task status";

@@ -38,7 +38,13 @@ export const loader = async () => {
  * Displays a list of todos using tasks loaded from the `/todos` route loader.
  */
 export const TodosIndex = () => {
-  const { tasks, showDeletedToast } = useTodosIndex();
+  const {
+    tasks,
+    showDeletedToast,
+    filteredTasks,
+    activeStatus,
+    handleFilterChange,
+  } = useTodosIndex();
   if (!tasks) return null;
 
   const summary = tasks.reduce(
@@ -59,21 +65,32 @@ export const TodosIndex = () => {
       )}
 
       <section className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
-        <AppSummaryCard label="All tasks" value={summary.total} />
+        <AppSummaryCard
+          label="All tasks"
+          value={summary.total}
+          isActive={!activeStatus}
+          onClick={() => handleFilterChange(null)}
+        />
         <AppSummaryCard
           label="To do"
           value={summary.todo}
           variant={SUMMARY_CARD_VARIANT.todo}
+          isActive={activeStatus === TASK_STATUS.TODO}
+          onClick={() => handleFilterChange(TASK_STATUS.TODO)}
         />
         <AppSummaryCard
           label="Doing"
           value={summary.doing}
           variant={SUMMARY_CARD_VARIANT.doing}
+          isActive={activeStatus === TASK_STATUS.DOING}
+          onClick={() => handleFilterChange(TASK_STATUS.DOING)}
         />
         <AppSummaryCard
           label="Done"
           value={summary.done}
           variant={SUMMARY_CARD_VARIANT.done}
+          isActive={activeStatus === TASK_STATUS.DONE}
+          onClick={() => handleFilterChange(TASK_STATUS.DONE)}
         />
       </section>
 
@@ -89,6 +106,22 @@ export const TodosIndex = () => {
             </AppButton>
           </Link>
         </section>
+      ) : filteredTasks.length === 0 ? (
+        <section className="mt-4 rounded-md border border-dashed border-form-border bg-card-bg p-8 text-center">
+          <p className="mb-2 text-lg font-bold">
+            No tasks in {activeStatus?.toLowerCase()}
+          </p>
+          <p className="mb-4 text-sm text-gray-500">
+            Select another status filter or show all tasks.
+          </p>
+          <AppButton
+            type="button"
+            color={BUTTON_VARIANT.outline}
+            onClick={() => handleFilterChange(null)}
+          >
+            Show all tasks
+          </AppButton>
+        </section>
       ) : (
         <>
           <div className="mt-4 hidden gap-5 px-2 font-semibold lg:grid lg:grid-cols-3">
@@ -98,7 +131,7 @@ export const TodosIndex = () => {
           </div>
 
           <div className="mt-2 space-y-2 overflow-y-auto rounded-md bg-surface-bg p-4 lg:max-h-200">
-            {tasks.map((task) => (
+            {filteredTasks.map((task) => (
               <Link
                 key={task.id}
                 to={`/todos/${task.id}`}

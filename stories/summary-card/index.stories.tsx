@@ -41,3 +41,11 @@ export const Done: Story = {
   },
 };
 
+export const Active: Story = {
+  args: {
+    label: "To do",
+    value: 5,
+    variant: SUMMARY_CARD_VARIANT.todo,
+    isActive: true,
+  },
+};

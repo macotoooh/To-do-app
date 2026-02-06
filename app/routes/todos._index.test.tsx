@@ -29,7 +29,7 @@ describe("todos._index", () => {
     test("throws 500 error if task fetching fails", async () => {
       // Arrange
       vi.mocked(taskModule.getTaskList).mockRejectedValueOnce(
-        new Error("DB is down")
+        new Error("DB is down"),
       );
 
       // Act
@@ -113,8 +113,8 @@ describe("todos._index", () => {
       // Assert
       await waitFor(() =>
         expect(
-          screen.getByText("Todo deleted successfully.")
-        ).toBeInTheDocument()
+          screen.getByText("Todo deleted successfully."),
+        ).toBeInTheDocument(),
       );
     });
 
@@ -130,6 +130,33 @@ describe("todos._index", () => {
       await waitFor(() => {
         expect(router.state.location.pathname).toBe("/todos/1");
       });
+    });
+
+    test("filters tasks when a summary card is selected", async () => {
+      // Arrange
+      vi.mocked(taskModule.getTaskList).mockResolvedValue([
+        ...mockTasks,
+        {
+          id: "2",
+          title: "Ship release",
+          content: "v1.0.0",
+          status: TASK_STATUS.DONE,
+          createdAt: new Date("2026/01/05/12:00"),
+          updatedAt: new Date("2026/01/05/12:30"),
+        },
+      ]);
+      const user = userEvent.setup();
+      renderTodosIndex();
+
+      expect(await screen.findByTestId("title-1")).toBeInTheDocument();
+      expect(await screen.findByTestId("title-2")).toBeInTheDocument();
+
+      // Act
+      await user.click(screen.getByRole("button", { name: /done/i }));
+
+      // Assert
+      expect(screen.queryByTestId("title-1")).not.toBeInTheDocument();
+      expect(await screen.findByTestId("title-2")).toBeInTheDocument();
     });
   });
 });
