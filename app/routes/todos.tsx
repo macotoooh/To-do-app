@@ -26,12 +26,12 @@ export const TodosLayout = () => {
 
   return (
     <div className="w-full p-5">
-      <div className="sticky top-0 flex justify-between p-2 bg-white">
+      <div className="sticky top-0 z-20 mb-4 flex items-center justify-between border-b border-gray-200 bg-white/95 p-2 backdrop-blur-sm">
         <div className="flex items-center">
           {!isTodoListPage && (
             <Link
               to="/todos"
-              className="text-2xl font-bold hover:opacity-50 pr-2"
+              className="pr-2 text-2xl font-bold hover:opacity-50"
               aria-label="Back to Todos"
             >
               〈

@@ -22,30 +22,39 @@ export const AISuggestions = <T extends FieldValues>({
   name,
   fetcher,
 }: Props<T>) => {
-  const options =
-    fetcher.data?.suggestions.map((sg) => ({
-      label: sg,
-      value: sg,
-    })) ?? [];
+  const suggestions = fetcher.data?.suggestions ?? [];
+  const options = suggestions.map((sg) => ({
+    label: sg,
+    value: sg,
+  }));
 
   const isLoading = fetcher.state === "submitting";
-  const hasSuggestions = fetcher.state === "idle" && fetcher.data?.suggestions;
+  const hasSuggestions = fetcher.state === "idle" && suggestions.length > 0;
+  const showEmptyState =
+    fetcher.state === "idle" && !!fetcher.data && suggestions.length === 0;
 
   return (
     <>
       {isLoading && (
-        <div className="flex items-center gap-2 text-sm text-gray-400 mb-2 animate-pulse">
+        <div className="my-2 flex items-center gap-2 rounded-md bg-surface-bg p-3 text-sm text-gray-500 animate-pulse">
           <span>🤖 AI is thinking...</span>
         </div>
       )}
 
       {hasSuggestions && (
-        <section className="mt-6 pt-4 border-t border-gray-100 animate-fade-in">
-          <p className="text-xs text-gray-500 mb-3">
+        <section className="mt-6 rounded-md border border-gray-200 bg-card-bg p-4 animate-fade-in">
+          <h2 className="mb-1 text-sm font-bold">AI suggestions</h2>
+          <p className="mb-3 text-xs text-gray-500">
             Selected items will be added as new tasks when you save.
           </p>
           <AppCheckbox name={name} control={control} options={options} />
         </section>
+      )}
+
+      {showEmptyState && (
+        <p className="mt-3 text-sm text-gray-500">
+          No suggestions found. Try a more specific title.
+        </p>
       )}
     </>
   );

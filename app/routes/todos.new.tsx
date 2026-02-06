@@ -70,6 +70,9 @@ const NewTodo = () => {
     error,
     fetcher,
   } = useNewTodo();
+  const title = watch("title");
+  const isSuggesting = fetcher.state === "submitting";
+  const canSuggest = title.trim().length > 0;
 
   if (isSubmitting) {
     return <AppLoading />;
@@ -91,15 +94,17 @@ const NewTodo = () => {
           <AppButton
             type="button"
             color={BUTTON_VARIANT.outline}
-            disabled={!watch("title")}
+            disabled={!canSuggest || isSuggesting}
             onClick={async () => {
               await fetcher.submit(
-                { title: watch("title") },
+                { title },
                 { method: "post", action: "suggest-ai" },
               );
             }}
           >
-            🤖 Generate task ideas with AI
+            {isSuggesting
+              ? "🤖 Generating..."
+              : "🤖 Generate task ideas with AI"}
           </AppButton>
           <AppButton
             color={BUTTON_VARIANT.primary}
