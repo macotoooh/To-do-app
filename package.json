@@ -9,7 +9,7 @@
     "typecheck": "react-router typegen && tsc",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "test": "vitest"
+    "test": "vitest run --config vitest.config.ts --pool=threads --maxWorkers=1 --fileParallelism=false"
   },
   "dependencies": {
     "@hookform/resolvers": "5.2.2",

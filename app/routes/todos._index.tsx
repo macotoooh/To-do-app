@@ -1,17 +1,19 @@
 import { isRouteErrorResponse, Link, useRouteError } from "react-router";
 import { AppButton } from "stories/button";
 import { BUTTON_VARIANT } from "stories/button/constants";
-import { AppStatusLabel } from "stories/status-label";
+import { AppFilterSelect } from "stories/filter-select";
 import { AppSummaryCard } from "stories/summary-card";
 import { SUMMARY_CARD_VARIANT } from "stories/summary-card/constants";
 import { AppToast } from "stories/toast";
 import { SUCCESS_TOAST } from "stories/toast/constants";
 import { TASK_STATUS } from "~/constants/tasks";
+import { TodosListContent } from "~/features/todos/components/todos-list-content";
 import { useTodosIndex } from "~/features/todos/hooks/use-todos-index";
 import { formatDate } from "~/utils/format-date";
 import { getTaskList } from "~/server/todos/get-task-list";
 import { rethrowAsInternalError } from "~/utils/errors";
 import { ErrorState } from "~/features/todos/components/error-state";
+import { isTaskStatus } from "~/utils/task-status";
 
 export const loader = async () => {
   try {
@@ -43,8 +45,15 @@ export const TodosIndex = () => {
     showDeletedToast,
     filteredTasks,
     activeStatus,
+    keyword,
+    activeSort,
+    sortOption,
     handleFilterChange,
+    handleKeywordChange,
+    handleSortChange,
+    handleClearAllFilters,
   } = useTodosIndex();
+
   if (!tasks) return null;
 
   const summary = tasks.reduce(
@@ -93,73 +102,68 @@ export const TodosIndex = () => {
           onClick={() => handleFilterChange(TASK_STATUS.DONE)}
         />
       </section>
-
-      {tasks.length === 0 ? (
-        <section className="mt-4 rounded-md border border-dashed border-form-border bg-card-bg p-8 text-center">
-          <p className="mb-2 text-lg font-bold">No tasks yet</p>
-          <p className="mb-4 text-sm text-gray-500">
-            Create your first task to start organizing your work.
-          </p>
-          <Link to="/todos/new">
-            <AppButton color={BUTTON_VARIANT.new}>
-              Create your first task
+      <section className="mt-3 grid gap-3 rounded-md bg-surface-bg p-3 md:grid-cols-3">
+        <div className="space-y-1">
+          <label className="text-xs text-gray-500" htmlFor="task-search">
+            Search
+          </label>
+          <input
+            id="task-search"
+            value={keyword}
+            onChange={(event) => {
+              handleKeywordChange(event.target.value);
+            }}
+            placeholder="Search title or content"
+            className="h-10 w-full rounded-md border border-form-border bg-white px-3 text-sm"
+          />
+        </div>
+        <div className="space-y-1">
+          <AppFilterSelect
+            id="task-status-filter"
+            label="Status filter"
+            value={activeStatus ?? ""}
+            onChange={(value) => {
+              handleFilterChange(isTaskStatus(value) ? value : null);
+            }}
+            options={[
+              { label: "All", value: "" },
+              { label: "To do", value: TASK_STATUS.TODO },
+              { label: "Doing", value: TASK_STATUS.DOING },
+              { label: "Done", value: TASK_STATUS.DONE },
+            ]}
+          />
+        </div>
+        <div className="space-y-1">
+          <div className="flex items-end gap-2">
+            <div className="w-full">
+              <AppFilterSelect
+                id="task-sort"
+                label="Sort"
+                value={activeSort}
+                onChange={handleSortChange}
+                options={[
+                  { label: "Newest first", value: sortOption.CREATED_DESC },
+                  { label: "Oldest first", value: sortOption.CREATED_ASC },
+                  { label: "Title A-Z", value: sortOption.TITLE_ASC },
+                  { label: "Title Z-A", value: sortOption.TITLE_DESC },
+                ]}
+              />
+            </div>
+            <AppButton
+              type="button"
+              color={BUTTON_VARIANT.outline}
+              onClick={handleClearAllFilters}
+            >
+              Clear
             </AppButton>
-          </Link>
-        </section>
-      ) : filteredTasks.length === 0 ? (
-        <section className="mt-4 rounded-md border border-dashed border-form-border bg-card-bg p-8 text-center">
-          <p className="mb-2 text-lg font-bold">
-            No tasks in {activeStatus?.toLowerCase()}
-          </p>
-          <p className="mb-4 text-sm text-gray-500">
-            Select another status filter or show all tasks.
-          </p>
-          <AppButton
-            type="button"
-            color={BUTTON_VARIANT.outline}
-            onClick={() => handleFilterChange(null)}
-          >
-            Show all tasks
-          </AppButton>
-        </section>
-      ) : (
-        <>
-          <div className="mt-4 hidden gap-5 px-2 font-semibold lg:grid lg:grid-cols-3">
-            <div className="p-2">Title</div>
-            <div className="p-2">Status</div>
-            <div className="p-2">Created At</div>
           </div>
-
-          <div className="mt-2 space-y-2 overflow-y-auto rounded-md bg-surface-bg p-4 lg:max-h-200">
-            {filteredTasks.map((task) => (
-              <Link
-                key={task.id}
-                to={`/todos/${task.id}`}
-                className="grid grid-cols-1 gap-2 rounded-md bg-card-bg p-3 transition-colors duration-200 hover:bg-[#e0dcdc] lg:grid-cols-3"
-              >
-                <div
-                  className="rounded-md bg-surface-bg p-2 font-bold wrap-break-word"
-                  data-testid={`title-${task.id}`}
-                >
-                  {task.title}
-                </div>
-                <div
-                  className="flex items-center rounded-md bg-surface-bg p-2"
-                  data-testid={`status-${task.id}`}
-                >
-                  <AppStatusLabel status={task.status} />
-                </div>
-                <div
-                  className="rounded-md bg-surface-bg p-2 text-sm"
-                  data-testid={`createdAt-${task.id}`}
-                >
-                  {task.createdAt}
-                </div>
-              </Link>
-            ))}
-          </div>
-        </>
-      )}
+        </div>
+      </section>
+      <TodosListContent
+        tasks={tasks}
+        filteredTasks={filteredTasks}
+        onClearFilters={handleClearAllFilters}
+      />
     </>
   );
 };

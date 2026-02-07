@@ -158,5 +158,132 @@ describe("todos._index", () => {
       expect(screen.queryByTestId("title-1")).not.toBeInTheDocument();
       expect(await screen.findByTestId("title-2")).toBeInTheDocument();
     });
+
+    test("filters tasks by search keyword", async () => {
+      // Arrange
+      vi.mocked(taskModule.getTaskList).mockResolvedValue([
+        ...mockTasks,
+        {
+          id: "2",
+          title: "Prepare release note",
+          content: "Draft and publish",
+          status: TASK_STATUS.DOING,
+          createdAt: new Date("2026/01/05/12:00"),
+          updatedAt: new Date("2026/01/05/12:30"),
+        },
+      ]);
+      const user = userEvent.setup();
+      renderTodosIndex();
+
+      // Act
+      await user.type(await screen.findByLabelText(/search/i), "release");
+
+      // Assert
+      expect(screen.queryByTestId("title-1")).not.toBeInTheDocument();
+      expect(await screen.findByTestId("title-2")).toBeInTheDocument();
+    });
+
+    test("sorts tasks by title order", async () => {
+      // Arrange
+      vi.mocked(taskModule.getTaskList).mockResolvedValue([
+        {
+          id: "1",
+          title: "B task",
+          content: "Second",
+          status: TASK_STATUS.TODO,
+          createdAt: new Date("2026/01/03/12:00"),
+          updatedAt: new Date("2026/01/04/18:00"),
+        },
+        {
+          id: "2",
+          title: "A task",
+          content: "First",
+          status: TASK_STATUS.TODO,
+          createdAt: new Date("2026/01/02/12:00"),
+          updatedAt: new Date("2026/01/02/18:00"),
+        },
+      ]);
+      const user = userEvent.setup();
+      renderTodosIndex();
+
+      // Act
+      await user.selectOptions(
+        await screen.findByLabelText(/sort/i),
+        "title_asc",
+      );
+
+      // Assert
+      await waitFor(() => {
+        const titles = screen.getAllByTestId(/title-/);
+        expect(titles[0]).toHaveTextContent("A task");
+        expect(titles[1]).toHaveTextContent("B task");
+      });
+    });
+
+    test("filters tasks by status filter select", async () => {
+      // Arrange
+      vi.mocked(taskModule.getTaskList).mockResolvedValue([
+        ...mockTasks,
+        {
+          id: "2",
+          title: "Ship release",
+          content: "v1.0.0",
+          status: TASK_STATUS.DONE,
+          createdAt: new Date("2026/01/05/12:00"),
+          updatedAt: new Date("2026/01/05/12:30"),
+        },
+      ]);
+      const user = userEvent.setup();
+      renderTodosIndex();
+
+      // Act
+      await user.selectOptions(
+        await screen.findByLabelText(/status filter/i),
+        "DONE",
+      );
+
+      // Assert
+      expect(screen.queryByTestId("title-1")).not.toBeInTheDocument();
+      expect(await screen.findByTestId("title-2")).toBeInTheDocument();
+    });
+
+    test("clears active filters when clear button is clicked", async () => {
+      // Arrange
+      vi.mocked(taskModule.getTaskList).mockResolvedValue([
+        {
+          id: "1",
+          title: "Buy groceries",
+          content: "Milk, eggs, bread",
+          status: TASK_STATUS.TODO,
+          createdAt: new Date("2026/01/03/12:00"),
+          updatedAt: new Date("2026/01/04/18:00"),
+        },
+        {
+          id: "2",
+          title: "Ship release",
+          content: "v1.0.0",
+          status: TASK_STATUS.DONE,
+          createdAt: new Date("2026/01/05/12:00"),
+          updatedAt: new Date("2026/01/05/12:30"),
+        },
+      ]);
+      const user = userEvent.setup();
+      renderTodosIndex();
+
+      await user.type(await screen.findByLabelText(/search/i), "not-found");
+      expect(
+        await screen.findByText(/No tasks match your filters/i),
+      ).toBeInTheDocument();
+
+      // Act
+      await user.click(screen.getByRole("button", { name: /clear filters/i }));
+
+      // Assert
+      expect(await screen.findByTestId("title-1")).toBeInTheDocument();
+      expect(await screen.findByTestId("title-2")).toBeInTheDocument();
+      expect(
+        screen.queryByText(/No tasks match your filters/i),
+      ).not.toBeInTheDocument();
+    });
   });
 });
