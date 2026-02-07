@@ -37,7 +37,7 @@ export const AppInput = <T extends FieldValues>({
     <>
       <div className="space-y-1">
         {label && (
-          <label htmlFor={field.name} className="text-sm">
+          <label htmlFor={field.name} className="text-xs text-gray-500">
             {label}
           </label>
         )}
@@ -45,7 +45,7 @@ export const AppInput = <T extends FieldValues>({
           {...field}
           id={field.name}
           placeholder={placeholder}
-          className={`w-full p-2 border border-form-border rounded-md ${errorText ? "bg-error-bg text-error-text" : ""}`}
+          className={`h-10 w-full rounded-md border border-form-border bg-white px-3 text-sm ${errorText ? "bg-error-bg text-error-text" : ""}`}
         />
       </div>
       {errorText && <p className="text-error-text text-sm">{errorText}</p>}
