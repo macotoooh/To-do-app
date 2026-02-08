@@ -37,6 +37,7 @@ Reusable UI components are developed and tested in **Storybook** for scalability
 - Displays todos in a table format
 - Status is color-coded with labels
 - Includes a button to create a new todo
+- Includes filtering controls (search, status, and sort)
 
 <img src="./docs/images/todos_pc.png" width="700" />
 
