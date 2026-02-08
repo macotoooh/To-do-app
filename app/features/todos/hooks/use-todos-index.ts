@@ -104,9 +104,9 @@ export const useTodosIndex = () => {
   };
 
   /**
-   * Clears all active filters and resets the search input.
+   * Clears all active list controls (search, status, and sort).
    *
-   * This keeps the local form state and URL query state consistent.
+   * Keeps `deleted=true` when present so the delete success toast flow works.
    */
   const handleClearAllFilters = () => {
     const nextParams = new URLSearchParams();
