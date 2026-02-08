@@ -285,5 +285,48 @@ describe("todos._index", () => {
         screen.queryByText(/No tasks match your filters/i),
       ).not.toBeInTheDocument();
     });
+
+    test("resets search, status, sort and URL query when top clear button is clicked", async () => {
+      // Arrange
+      vi.mocked(taskModule.getTaskList).mockResolvedValue([
+        {
+          id: "1",
+          title: "Buy groceries",
+          content: "Milk, eggs, bread",
+          status: TASK_STATUS.TODO,
+          createdAt: new Date("2026/01/03/12:00"),
+          updatedAt: new Date("2026/01/04/18:00"),
+        },
+        {
+          id: "2",
+          title: "Ship release",
+          content: "v1.0.0",
+          status: TASK_STATUS.DONE,
+          createdAt: new Date("2026/01/05/12:00"),
+          updatedAt: new Date("2026/01/05/12:30"),
+        },
+      ]);
+      const user = userEvent.setup();
+      const router = renderTodosIndex();
+
+      const searchInput = await screen.findByLabelText(/search/i);
+      const statusFilter = await screen.findByLabelText(/status filter/i);
+      const sortFilter = await screen.findByLabelText(/sort/i);
+
+      await user.type(searchInput, "ship");
+      await user.selectOptions(statusFilter, TASK_STATUS.DONE);
+      await user.selectOptions(sortFilter, "title_desc");
+
+      // Act
+      await user.click(screen.getByRole("button", { name: /^clear$/i }));
+
+      // Assert
+      await waitFor(() => {
+        expect(router.state.location.search).toBe("");
+      });
+      expect(searchInput).toHaveValue("");
+      expect(statusFilter).toHaveValue("");
+      expect(sortFilter).toHaveValue("created_desc");
+    });
   });
 });
