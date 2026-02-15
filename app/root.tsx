@@ -6,9 +6,12 @@ import {
   Scripts,
   ScrollRestoration,
 } from "react-router";
+import type { ReactNode } from "react";
 
 import type { Route } from "./+types/root";
 import "./app.css";
+
+const DEFAULT_ERROR_DETAILS = "An unexpected error occurred.";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -23,7 +26,7 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
-export function Layout({ children }: { children: React.ReactNode }) {
+export function Layout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>
@@ -47,7 +50,7 @@ export default function App() {
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   let message = "Oops!";
-  let details = "An unexpected error occurred.";
+  let details = DEFAULT_ERROR_DETAILS;
   let stack: string | undefined;
 
   if (isRouteErrorResponse(error)) {
@@ -55,7 +58,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
     details =
       error.status === 404
         ? "The requested page could not be found."
-        : error.statusText || details;
+        : error.statusText || DEFAULT_ERROR_DETAILS;
   } else if (import.meta.env.DEV && error && error instanceof Error) {
     details = error.message;
     stack = error.stack;

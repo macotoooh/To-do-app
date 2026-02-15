@@ -4,8 +4,8 @@ import type { Task } from "~/types/tasks";
 /**
  * Mock function for fetching todo list (demo data)
  */
-export const getTaskList = async (): Promise<Task[]> => {
-  return [
+export const getTaskList = (): Promise<Task[]> => {
+  return Promise.resolve([
     {
       id: "1",
       title: "Buy groceries",
@@ -166,5 +166,5 @@ export const getTaskList = async (): Promise<Task[]> => {
       createdAt: new Date("2026-01-20T16:00:00Z"),
       updatedAt: new Date("2026-01-20T17:00:00Z"),
     },
-  ];
+  ]);
 };
