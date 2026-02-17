@@ -104,6 +104,7 @@ describe("todos._index", () => {
       expect(await screen.findByTestId("title-1")).toBeInTheDocument();
       expect(await screen.findByTestId("status-1")).toBeInTheDocument();
       expect(await screen.findByTestId("createdAt-1")).toBeInTheDocument();
+      expect(screen.getByText("Showing 1 of 1 tasks")).toBeInTheDocument();
     });
 
     test("shows toast when a task is deleted", async () => {
@@ -312,13 +313,19 @@ describe("todos._index", () => {
       const searchInput = await screen.findByLabelText(/search/i);
       const statusFilter = await screen.findByLabelText(/status filter/i);
       const sortFilter = await screen.findByLabelText(/sort/i);
+      const clearAllButton = screen.getByRole("button", {
+        name: /clear all filters/i,
+      });
+
+      expect(clearAllButton).toBeDisabled();
 
       await user.type(searchInput, "ship");
       await user.selectOptions(statusFilter, TASK_STATUS.DONE);
       await user.selectOptions(sortFilter, "title_desc");
+      expect(clearAllButton).toBeEnabled();
 
       // Act
-      await user.click(screen.getByRole("button", { name: /^clear$/i }));
+      await user.click(clearAllButton);
 
       // Assert
       await waitFor(() => {
@@ -327,6 +334,42 @@ describe("todos._index", () => {
       expect(searchInput).toHaveValue("");
       expect(statusFilter).toHaveValue("");
       expect(sortFilter).toHaveValue("created_desc");
+      expect(clearAllButton).toBeDisabled();
+    });
+
+    test("clears only keyword when search clear button is clicked", async () => {
+      // Arrange
+      vi.mocked(taskModule.getTaskList).mockResolvedValue([
+        {
+          id: "1",
+          title: "Buy groceries",
+          content: "Milk, eggs, bread",
+          status: TASK_STATUS.TODO,
+          createdAt: new Date("2026/01/03/12:00"),
+          updatedAt: new Date("2026/01/04/18:00"),
+        },
+        {
+          id: "2",
+          title: "Ship release",
+          content: "v1.0.0",
+          status: TASK_STATUS.DONE,
+          createdAt: new Date("2026/01/05/12:00"),
+          updatedAt: new Date("2026/01/05/12:30"),
+        },
+      ]);
+      const user = userEvent.setup();
+      renderTodosIndex();
+
+      const searchInput = await screen.findByLabelText(/search/i);
+      await user.type(searchInput, "ship");
+
+      // Act
+      await user.click(screen.getByRole("button", { name: /clear search/i }));
+
+      // Assert
+      expect(searchInput).toHaveValue("");
+      expect(await screen.findByTestId("title-1")).toBeInTheDocument();
+      expect(await screen.findByTestId("title-2")).toBeInTheDocument();
     });
   });
 });

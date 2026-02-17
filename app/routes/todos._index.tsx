@@ -47,6 +47,7 @@ export const TodosIndex = () => {
     activeStatus,
     keyword,
     activeSort,
+    hasActiveFilters,
     sortOption,
     handleFilterChange,
     handleKeywordChange,
@@ -107,15 +108,29 @@ export const TodosIndex = () => {
           <label className="text-xs text-gray-500" htmlFor="task-search">
             Search
           </label>
-          <input
-            id="task-search"
-            value={keyword}
-            onChange={(event) => {
-              handleKeywordChange(event.target.value);
-            }}
-            placeholder="Search title or content"
-            className="h-10 w-full rounded-md border border-form-border bg-white px-3 text-sm"
-          />
+          <div className="relative">
+            <input
+              id="task-search"
+              value={keyword}
+              onChange={(event) => {
+                handleKeywordChange(event.target.value);
+              }}
+              placeholder="Search title or content"
+              className="h-10 w-full rounded-md border border-form-border bg-white px-3 pr-16 text-sm"
+            />
+            {keyword && (
+              <button
+                type="button"
+                aria-label="Clear search"
+                onClick={() => {
+                  handleKeywordChange("");
+                }}
+                className="absolute top-1/2 right-2 -translate-y-1/2 rounded px-2 py-1 text-xs text-gray-500 hover:bg-gray-100"
+              >
+                Clear
+              </button>
+            )}
+          </div>
         </div>
         <div className="space-y-1">
           <AppFilterSelect
@@ -153,6 +168,8 @@ export const TodosIndex = () => {
               type="button"
               color={BUTTON_VARIANT.outline}
               onClick={handleClearAllFilters}
+              disabled={!hasActiveFilters}
+              aria-label="Clear all filters"
             >
               Clear
             </AppButton>
