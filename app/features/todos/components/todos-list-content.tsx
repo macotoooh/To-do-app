@@ -58,6 +58,11 @@ export const TodosListContent = ({
 
   return (
     <section className="mt-4 overflow-hidden rounded-md border border-gray-200 bg-surface-bg">
+      <div className="flex items-center justify-between border-b border-gray-200 bg-card-bg px-4 py-2 text-xs text-gray-500 sm:text-sm">
+        <p aria-live="polite">
+          Showing {filteredTasks.length} of {tasks.length} tasks
+        </p>
+      </div>
       <div className="hidden grid-cols-3 gap-5 border-b border-gray-200 bg-card-bg px-4 py-2 text-sm font-semibold tracking-wide text-gray-500 uppercase lg:grid">
         <div className="p-1">Title</div>
         <div className="p-1">Status</div>

@@ -27,6 +27,10 @@ export const useTodosIndex = () => {
   const activeSort = isSortOption(sortParam)
     ? sortParam
     : SORT_OPTION.CREATED_DESC;
+  const hasActiveFilters =
+    Boolean(activeStatus) ||
+    Boolean(keyword.trim()) ||
+    activeSort !== SORT_OPTION.CREATED_DESC;
 
   const statusFilteredTasks = activeStatus
     ? tasks.filter((task) => task.status === activeStatus)
@@ -64,12 +68,12 @@ export const useTodosIndex = () => {
     const nextParams = new URLSearchParams(params);
     if (status) {
       nextParams.set("status", status);
-      setParams(nextParams);
+      setParams(nextParams, { replace: true });
       return;
     }
 
     nextParams.delete("status");
-    setParams(nextParams);
+    setParams(nextParams, { replace: true });
   };
 
   /**
@@ -81,12 +85,12 @@ export const useTodosIndex = () => {
     const nextParams = new URLSearchParams(params);
     if (value.trim()) {
       nextParams.set("q", value);
-      setParams(nextParams);
+      setParams(nextParams, { replace: true });
       return;
     }
 
     nextParams.delete("q");
-    setParams(nextParams);
+    setParams(nextParams, { replace: true });
   };
 
   /**
@@ -100,7 +104,7 @@ export const useTodosIndex = () => {
     if (!isSortOption(sort)) return;
     const nextParams = new URLSearchParams(params);
     nextParams.set("sort", sort);
-    setParams(nextParams);
+    setParams(nextParams, { replace: true });
   };
 
   /**
@@ -113,10 +117,7 @@ export const useTodosIndex = () => {
     if (params.get("deleted") === "true") {
       nextParams.set("deleted", "true");
     }
-    nextParams.delete("q");
-    nextParams.delete("status");
-    nextParams.delete("sort");
-    setParams(nextParams);
+    setParams(nextParams, { replace: true });
   };
 
   useEffect(() => {
@@ -139,6 +140,7 @@ export const useTodosIndex = () => {
     activeStatus,
     keyword,
     activeSort,
+    hasActiveFilters,
     sortOption: SORT_OPTION,
     handleFilterChange,
     handleKeywordChange,
