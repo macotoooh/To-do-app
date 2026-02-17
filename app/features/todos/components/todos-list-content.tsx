@@ -1,7 +1,9 @@
 import { Link } from "react-router";
 import { AppButton } from "stories/button";
 import { BUTTON_VARIANT } from "stories/button/constants";
+import { AppModal } from "stories/modal";
 import { AppStatusLabel } from "stories/status-label";
+import { useTodosListContent } from "~/features/todos/hooks/use-todos-list-content";
 import type { TaskDTO } from "~/types/tasks";
 
 type TodosListContentProps = {
@@ -22,6 +24,15 @@ export const TodosListContent = ({
   filteredTasks,
   onClearFilters,
 }: TodosListContentProps) => {
+  const {
+    selectedTask,
+    slideToDetail,
+    slideToList,
+    openTaskPreview,
+    closeTaskPreview,
+    openSelectedTaskDetail,
+  } = useTodosListContent();
+
   if (tasks.length === 0) {
     return (
       <section className="mt-4 rounded-md border border-dashed border-form-border bg-card-bg p-8 text-center">
@@ -57,8 +68,8 @@ export const TodosListContent = ({
   }
 
   return (
-    <section className="mt-4 overflow-hidden rounded-md border border-gray-200 bg-surface-bg">
-      <div className="flex items-center justify-between border-b border-gray-200 bg-card-bg px-4 py-2 text-xs text-gray-500 sm:text-sm">
+    <section className="mt-4 overflow-hidden rounded-xl border border-gray-200 bg-surface-bg shadow-sm">
+      <div className="flex items-center justify-between border-b border-gray-200 bg-card-bg px-4 py-3 text-xs text-gray-500 sm:text-sm">
         <p aria-live="polite">
           Showing {filteredTasks.length} of {tasks.length} tasks
         </p>
@@ -69,34 +80,145 @@ export const TodosListContent = ({
         <div className="p-1">Created At</div>
       </div>
 
-      <div className="space-y-2 overflow-y-auto p-4 lg:max-h-200">
+      <div className="space-y-2 overflow-y-auto p-3 lg:max-h-200 lg:p-3">
         {filteredTasks.map((task) => (
-          <Link
+          <article
             key={task.id}
-            to={`/todos/${task.id}`}
-            className="grid grid-cols-1 gap-2 rounded-md border border-transparent bg-card-bg p-3 transition-colors duration-200 hover:border-gray-200 hover:bg-[#e0dcdc] lg:grid-cols-3"
+            className="rounded-lg border border-gray-200/70 bg-card-bg p-2.5 transition-all duration-200 hover:border-gray-300 hover:shadow-sm lg:p-2"
           >
-            <div
-              className="rounded-md bg-surface-bg p-2 font-bold wrap-break-word"
-              data-testid={`title-${task.id}`}
-            >
-              {task.title}
+            <div className="overflow-x-auto snap-x snap-mandatory rounded-md lg:hidden">
+              <div className="flex w-full items-start gap-2">
+                <button
+                  type="button"
+                  onClick={slideToDetail}
+                  className="w-full shrink-0 snap-start rounded-md text-left focus:outline-none focus:ring-2 focus:ring-gray-300"
+                >
+                  <div className="grid grid-cols-1 gap-2 lg:grid-cols-3 lg:gap-1.5">
+                    <div className="rounded-md bg-surface-bg p-2.5 font-bold wrap-break-word lg:p-2">
+                      {task.title}
+                    </div>
+                    <div className="flex items-center rounded-md bg-surface-bg p-2.5 lg:p-2">
+                      <AppStatusLabel status={task.status} />
+                    </div>
+                    <div className="rounded-md bg-surface-bg p-2.5 text-sm lg:p-2">
+                      {task.createdAt}
+                    </div>
+                  </div>
+                </button>
+
+                <section className="w-full shrink-0 snap-start rounded-md border border-gray-200 bg-surface-bg p-3">
+                  <div className="mb-2 flex items-center justify-between">
+                    <p className="text-xs font-medium tracking-wide text-gray-500 uppercase">
+                      Task details
+                    </p>
+                    <button
+                      type="button"
+                      onClick={slideToList}
+                      className="rounded px-2 py-1 text-xs text-gray-600 hover:bg-gray-100"
+                    >
+                      Back to list
+                    </button>
+                  </div>
+                  <p className="mb-2 font-bold wrap-break-word">{task.title}</p>
+                  <p className="mb-3 text-sm wrap-break-word">
+                    {task.content?.trim() ? task.content : "No content"}
+                  </p>
+                  <div className="mb-2">
+                    <AppStatusLabel status={task.status} />
+                  </div>
+                  <p className="text-xs text-gray-500">{task.createdAt}</p>
+                </section>
+              </div>
             </div>
-            <div
-              className="flex items-center rounded-md bg-surface-bg p-2"
-              data-testid={`status-${task.id}`}
+
+            <button
+              type="button"
+              onClick={() => openTaskPreview(task)}
+              className="hidden w-full rounded-md text-left focus:outline-none focus:ring-2 focus:ring-gray-300 lg:block"
             >
-              <AppStatusLabel status={task.status} />
+              <div className="grid grid-cols-3 gap-1.5">
+                <div
+                  className="rounded-md bg-surface-bg p-2 font-bold wrap-break-word"
+                  data-testid={`title-${task.id}`}
+                >
+                  {task.title}
+                </div>
+                <div
+                  className="flex items-center rounded-md bg-surface-bg p-2"
+                  data-testid={`status-${task.id}`}
+                >
+                  <AppStatusLabel status={task.status} />
+                </div>
+                <div
+                  className="rounded-md bg-surface-bg p-2 text-sm"
+                  data-testid={`createdAt-${task.id}`}
+                >
+                  {task.createdAt}
+                </div>
+              </div>
+            </button>
+
+            <div className="mt-1.5 flex items-center justify-between gap-2 border-t border-gray-100 pt-1.5">
+              <p className="text-xs text-gray-500 lg:hidden">
+                Click row to preview details
+              </p>
+              <Link
+                to={`/todos/${task.id}`}
+                aria-label={`View details for ${task.title}`}
+                className="ml-auto inline-flex items-center rounded px-2 py-1 text-xs font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-800"
+              >
+                Details
+              </Link>
             </div>
-            <div
-              className="rounded-md bg-surface-bg p-2 text-sm"
-              data-testid={`createdAt-${task.id}`}
-            >
-              {task.createdAt}
-            </div>
-          </Link>
+          </article>
         ))}
       </div>
+
+      {selectedTask && (
+        <div className="hidden lg:block">
+          <AppModal
+            title="Task preview"
+            confirmLabel="Open details"
+            cancelLabel="Close"
+            confirmColor={BUTTON_VARIANT.primary}
+            cancelColor={BUTTON_VARIANT.neutral}
+            onConfirm={() => {
+              openSelectedTaskDetail();
+            }}
+            onCancel={closeTaskPreview}
+            allowEscapeClose
+            allowOverlayClose
+            panelClassName="w-[min(720px,92vw)]"
+          >
+            <div className="space-y-3">
+              <div className="rounded-md bg-surface-bg p-3">
+                <p className="text-xs text-gray-500">Title</p>
+                <p className="mt-1 font-bold wrap-break-word">
+                  {selectedTask.title}
+                </p>
+              </div>
+              <div className="rounded-md bg-surface-bg p-3">
+                <p className="text-xs text-gray-500">Content</p>
+                <p className="mt-1 text-sm wrap-break-word">
+                  {selectedTask.content?.trim()
+                    ? selectedTask.content
+                    : "No content"}
+                </p>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="rounded-md bg-surface-bg p-3">
+                  <p className="mb-1 text-xs text-gray-500">Status</p>
+                  <AppStatusLabel status={selectedTask.status} />
+                </div>
+                <div className="rounded-md bg-surface-bg p-3">
+                  <p className="text-xs text-gray-500">Created At</p>
+                  <p className="mt-1 text-sm">{selectedTask.createdAt}</p>
+                </div>
+              </div>
+            </div>
+          </AppModal>
+        </div>
+      )}
     </section>
   );
 };
