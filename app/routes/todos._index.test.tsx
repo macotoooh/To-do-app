@@ -119,7 +119,23 @@ describe("todos._index", () => {
       );
     });
 
-    test("navigates to detail page when task row is clicked", async () => {
+    test("navigates to detail page when details link is clicked", async () => {
+      // Arrange
+      const user = userEvent.setup();
+      const router = renderTodosIndex();
+
+      // Act
+      await user.click(
+        await screen.findByRole("link", { name: /view details for buy groceries/i }),
+      );
+
+      // Assert
+      await waitFor(() => {
+        expect(router.state.location.pathname).toBe("/todos/1");
+      });
+    });
+
+    test("does not navigate when title area is clicked", async () => {
       // Arrange
       const user = userEvent.setup();
       const router = renderTodosIndex();
@@ -128,9 +144,7 @@ describe("todos._index", () => {
       await user.click(await screen.findByTestId("title-1"));
 
       // Assert
-      await waitFor(() => {
-        expect(router.state.location.pathname).toBe("/todos/1");
-      });
+      expect(router.state.location.pathname).toBe("/todos");
     });
 
     test("filters tasks when a summary card is selected", async () => {
@@ -153,7 +167,12 @@ describe("todos._index", () => {
       expect(await screen.findByTestId("title-2")).toBeInTheDocument();
 
       // Act
-      await user.click(screen.getByRole("button", { name: /done/i }));
+      const doneSummaryLabel = screen.getByText("Done", { selector: "p" });
+      const doneSummaryButton = doneSummaryLabel.closest("button");
+      if (!doneSummaryButton) {
+        throw new Error("Done summary card button not found");
+      }
+      await user.click(doneSummaryButton);
 
       // Assert
       expect(screen.queryByTestId("title-1")).not.toBeInTheDocument();
