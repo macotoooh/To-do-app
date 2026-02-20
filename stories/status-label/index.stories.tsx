@@ -32,3 +32,10 @@ export const Done: Story = {
     status: TASK_STATUS.DONE,
   },
 };
+
+export const AI: Story = {
+  args: {
+    status: "AI 90",
+    tone: "ai",
+  },
+};

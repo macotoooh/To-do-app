@@ -1,9 +1,19 @@
-import { useEffect, useState } from "react";
-import { useLoaderData, useNavigate, useSearchParams } from "react-router";
+import { useEffect, useMemo, useState } from "react";
+import {
+  useFetcher,
+  useLoaderData,
+  useNavigate,
+  useSearchParams,
+} from "react-router";
+import { TASK_STATUS } from "~/constants/tasks";
 import { SORT_OPTION } from "~/constants/sort";
 import type { TaskDTO, TaskStatus } from "~/types/tasks";
 import { isSortOption } from "~/utils/sort";
 import { isTaskStatus } from "~/utils/task-status";
+
+type PriorityResponse = {
+  items?: Array<{ id: string; score: number; reason: string }>;
+};
 
 /**
  * Custom hook for the Todos index page.
@@ -16,8 +26,22 @@ export const useTodosIndex = () => {
   const tasks = useLoaderData() as TaskDTO[];
   const [params, setParams] = useSearchParams();
   const navigate = useNavigate();
+  const priorityFetcher = useFetcher<PriorityResponse>();
 
   const [showDeletedToast, setShowDeletedToast] = useState(false);
+  const aiPriorities = useMemo(() => {
+    const items = priorityFetcher.data?.items ?? [];
+    return items.reduce<Record<string, { score: number; reason: string }>>(
+      (acc, item) => {
+        acc[item.id] = {
+          score: item.score,
+          reason: item.reason,
+        };
+        return acc;
+      },
+      {},
+    );
+  }, [priorityFetcher.data]);
 
   const deleted = params.get("deleted") === "true";
   const statusParam = params.get("status");
@@ -32,6 +56,8 @@ export const useTodosIndex = () => {
     Boolean(keyword.trim()) ||
     activeSort !== SORT_OPTION.CREATED_DESC;
 
+  const hasPriorityScores = Object.keys(aiPriorities).length > 0;
+
   const statusFilteredTasks = activeStatus
     ? tasks.filter((task) => task.status === activeStatus)
     : tasks;
@@ -44,6 +70,14 @@ export const useTodosIndex = () => {
     );
   });
   const filteredTasks = [...searchedTasks].sort((a, b) => {
+    if (activeSort === SORT_OPTION.PRIORITY_DESC) {
+      const scoreA = aiPriorities[a.id]?.score ?? -1;
+      const scoreB = aiPriorities[b.id]?.score ?? -1;
+      if (scoreA !== scoreB) {
+        return scoreB - scoreA;
+      }
+      return b.createdAt.localeCompare(a.createdAt);
+    }
     if (activeSort === SORT_OPTION.CREATED_ASC) {
       return a.createdAt.localeCompare(b.createdAt);
     }
@@ -108,6 +142,25 @@ export const useTodosIndex = () => {
   };
 
   /**
+   * Calls AI to score tasks by priority (0-100).
+   */
+  const handleGeneratePriorities = async () => {
+    const payload = tasks
+      .filter((task) => task.status !== TASK_STATUS.DONE)
+      .map((task) => ({
+        id: task.id,
+        title: task.title,
+        status: task.status,
+        content: task.content,
+      }));
+
+    await priorityFetcher.submit(
+      { tasks: JSON.stringify(payload) },
+      { method: "post", action: "ai/prioritize" },
+    );
+  };
+
+  /**
    * Clears all active list controls (search, status, and sort).
    *
    * Keeps `deleted=true` when present so the delete success toast flow works.
@@ -140,11 +193,15 @@ export const useTodosIndex = () => {
     activeStatus,
     keyword,
     activeSort,
+    aiPriorities,
+    hasPriorityScores,
     hasActiveFilters,
+    isPrioritizing: priorityFetcher.state !== "idle",
     sortOption: SORT_OPTION,
     handleFilterChange,
     handleKeywordChange,
     handleSortChange,
     handleClearAllFilters,
+    handleGeneratePriorities,
   };
 };

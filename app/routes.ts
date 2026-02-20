@@ -8,5 +8,6 @@ export default [
     route(":id", "routes/todos.$id.tsx"),
     route("new/suggest-ai", "routes/todos.new.suggest-ai.tsx"),
     route(":id/suggest-ai", "routes/todos.$id.suggest-ai.tsx"),
+    route("ai/prioritize", "routes/todos.ai.prioritize.tsx"),
   ]),
 ] satisfies RouteConfig;

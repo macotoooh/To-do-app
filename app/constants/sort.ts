@@ -3,4 +3,5 @@ export const SORT_OPTION = {
   CREATED_ASC: "created_asc",
   TITLE_ASC: "title_asc",
   TITLE_DESC: "title_desc",
+  PRIORITY_DESC: "priority_desc",
 } as const;
