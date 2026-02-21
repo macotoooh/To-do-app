@@ -1,4 +1,27 @@
 import { callOpenAI } from "~/server/ai/openai.server";
+import type { TaskStatus } from "~/types/tasks";
+
+type PrioritizerInputTask = {
+  id: string;
+  title: string;
+  status: TaskStatus;
+  content?: string;
+};
+
+export type PrioritizedTask = {
+  id: string;
+  score: number;
+  reason: string;
+};
+
+const extractJSONObject = (text: string): string | null => {
+  const firstBrace = text.indexOf("{");
+  const lastBrace = text.lastIndexOf("}");
+  if (firstBrace === -1 || lastBrace === -1 || firstBrace >= lastBrace) {
+    return null;
+  }
+  return text.slice(firstBrace, lastBrace + 1);
+};
 
 /**
  * Generates task suggestions based on a given task title using AI.
@@ -31,6 +54,61 @@ Return only a bullet list of task titles.
       .split("\n")
       .map((line) => line.replace(/^[-*]\s*/, "").trim())
       .filter(Boolean);
+  } catch (err: any) {
+    if (err.status === 429) {
+      throw new Error("AI quota exceeded");
+    }
+    throw err;
+  }
+};
+
+/**
+ * Generates AI priority scores for a task list.
+ *
+ * @param tasks - Task list to prioritize
+ * @returns List of task ids with score (0-100) and short reasoning
+ */
+export const suggestTaskPriorities = async (
+  tasks: PrioritizerInputTask[],
+): Promise<PrioritizedTask[]> => {
+  const prompt = `
+You are a task prioritization assistant.
+Score each task from 0 to 100 based on impact and urgency.
+
+Tasks:
+${tasks
+  .map(
+    (task) =>
+      `- id: ${task.id}, title: ${task.title}, status: ${task.status}, content: ${task.content ?? "N/A"}`,
+  )
+  .join("\n")}
+
+Return only JSON in this format:
+{
+  "items": [
+    { "id": "task-id", "score": 78, "reason": "short reason" }
+  ]
+}
+`;
+
+  try {
+    const text = await callOpenAI(prompt);
+    const jsonText = extractJSONObject(text);
+    if (!jsonText) return [];
+    const parsed = JSON.parse(jsonText) as { items?: PrioritizedTask[] };
+
+    return (parsed.items ?? [])
+      .filter(
+        (item) =>
+          typeof item?.id === "string" &&
+          typeof item?.score === "number" &&
+          typeof item?.reason === "string",
+      )
+      .map((item) => ({
+        id: item.id,
+        score: Math.max(0, Math.min(100, Math.round(item.score))),
+        reason: item.reason.trim(),
+      }));
   } catch (err: any) {
     if (err.status === 429) {
       throw new Error("AI quota exceeded");

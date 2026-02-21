@@ -21,6 +21,8 @@ body {
   --color-neutral-bg: #d9d9d9;
   --color-new-bg: #e0f2fe;
   --color-new-text: #0284c7;
+  --color-ai-bg: #dbeafe;
+  --color-ai-text: #1d4ed8;
   --color-danger-bg: #ff6f6f;
 
   /* Status - TODO */

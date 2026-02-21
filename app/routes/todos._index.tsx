@@ -47,12 +47,16 @@ export const TodosIndex = () => {
     activeStatus,
     keyword,
     activeSort,
+    aiPriorities,
+    hasPriorityScores,
     hasActiveFilters,
+    isPrioritizing,
     sortOption,
     handleFilterChange,
     handleKeywordChange,
     handleSortChange,
     handleClearAllFilters,
+    handleGeneratePriorities,
   } = useTodosIndex();
 
   if (!tasks) return null;
@@ -103,7 +107,7 @@ export const TodosIndex = () => {
           onClick={() => handleFilterChange(TASK_STATUS.DONE)}
         />
       </section>
-      <section className="mt-3 grid gap-3 rounded-md bg-surface-bg p-3 md:grid-cols-3">
+      <section className="mt-3 grid gap-3 rounded-md bg-surface-bg p-3 md:grid-cols-4">
         <div className="space-y-1">
           <label className="text-xs text-gray-500" htmlFor="task-search">
             Search
@@ -161,6 +165,10 @@ export const TodosIndex = () => {
                   { label: "Oldest first", value: sortOption.CREATED_ASC },
                   { label: "Title A-Z", value: sortOption.TITLE_ASC },
                   { label: "Title Z-A", value: sortOption.TITLE_DESC },
+                  {
+                    label: "AI priority",
+                    value: sortOption.PRIORITY_DESC,
+                  },
                 ]}
               />
             </div>
@@ -175,11 +183,28 @@ export const TodosIndex = () => {
             </AppButton>
           </div>
         </div>
+        <div className="flex h-full flex-col justify-end space-y-1">
+          <label className="text-xs text-gray-500">AI Prioritizer</label>
+          <AppButton
+            type="button"
+            color={BUTTON_VARIANT.ai}
+            disabled={isPrioritizing || tasks.length === 0}
+            onClick={handleGeneratePriorities}
+          >
+            {isPrioritizing ? "Scoring..." : "Score priorities"}
+          </AppButton>
+          {hasPriorityScores && (
+            <p className="text-xs text-gray-500">
+              Priority scores are ready. Sort by AI priority.
+            </p>
+          )}
+        </div>
       </section>
       <TodosListContent
         tasks={tasks}
         filteredTasks={filteredTasks}
         onClearFilters={handleClearAllFilters}
+        aiPriorities={aiPriorities}
       />
     </>
   );

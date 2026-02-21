@@ -10,6 +10,7 @@ type TodosListContentProps = {
   tasks: TaskDTO[];
   filteredTasks: TaskDTO[];
   onClearFilters: () => void;
+  aiPriorities: Record<string, { score: number; reason: string }>;
 };
 
 /**
@@ -18,11 +19,13 @@ type TodosListContentProps = {
  * @param tasks - Full task list from loader
  * @param filteredTasks - Task list after applying filters
  * @param onClearFilters - Callback to reset active filters
+ * @param aiPriorities - AI-generated priority scores/reasons keyed by task id
  */
 export const TodosListContent = ({
   tasks,
   filteredTasks,
   onClearFilters,
+  aiPriorities,
 }: TodosListContentProps) => {
   const {
     selectedTask,
@@ -141,7 +144,14 @@ export const TodosListContent = ({
                   className="rounded-md bg-surface-bg p-2 font-bold wrap-break-word"
                   data-testid={`title-${task.id}`}
                 >
-                  {task.title}
+                  <div className="flex items-center justify-between gap-2">
+                    <span>{task.title}</span>
+                    {typeof aiPriorities[task.id]?.score === "number" && (
+                      <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-700">
+                        AI {aiPriorities[task.id].score}
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <div
                   className="flex items-center rounded-md bg-surface-bg p-2"
@@ -215,6 +225,20 @@ export const TodosListContent = ({
                   <p className="mt-1 text-sm">{selectedTask.createdAt}</p>
                 </div>
               </div>
+              {typeof aiPriorities[selectedTask.id]?.score === "number" && (
+                <div className="rounded-md border border-blue-200 bg-blue-50 p-3">
+                  <p className="text-xs text-blue-700">AI Priority Score</p>
+                  <div className="mt-1">
+                    <AppStatusLabel
+                      status={`AI ${aiPriorities[selectedTask.id].score}`}
+                      tone="ai"
+                    />
+                  </div>
+                  <p className="mt-1 text-sm text-blue-800">
+                    {aiPriorities[selectedTask.id].reason}
+                  </p>
+                </div>
+              )}
             </div>
           </AppModal>
         </div>

@@ -4,6 +4,7 @@ const colorToClass: Record<ButtonColorValue, string> = {
   PRIMARY: "bg-primary-bg text-white ",
   NEUTRAL: "bg-neutral-bg text-white ",
   NEW: "bg-new-bg text-new-text",
+  AI: "bg-ai-bg text-ai-text",
   DANGER: "bg-danger-bg text-white",
   OUTLINE: "bg-white text-gray border border-gray-400",
 };

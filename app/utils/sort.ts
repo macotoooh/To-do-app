@@ -15,6 +15,7 @@ export const isSortOption = (value: unknown): value is SortOption => {
     value === SORT_OPTION.CREATED_DESC ||
     value === SORT_OPTION.CREATED_ASC ||
     value === SORT_OPTION.TITLE_ASC ||
-    value === SORT_OPTION.TITLE_DESC
+    value === SORT_OPTION.TITLE_DESC ||
+    value === SORT_OPTION.PRIORITY_DESC
   );
 };
