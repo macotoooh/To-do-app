@@ -97,11 +97,14 @@ APIキーがクライアントに露出しない安全な構成です。
 
 ## 🗺️ ルーティング構成
 
-| ページ名 | パス         |
-| -------- | ------------ |
-| Todo一覧 | `/todos`     |
-| Todo詳細 | `/todos/:id` |
-| 新規作成 | `/todos/new` |
+| 種別   | パス                    | 用途                           |
+| ------ | ----------------------- | ------------------------------ |
+| Page   | `/todos`                | Todo一覧ページ                 |
+| Page   | `/todos/:id`            | Todo詳細ページ                 |
+| Page   | `/todos/new`            | Todo新規作成ページ             |
+| Action | `/todos/new/suggest-ai` | 新規作成ページ向けAI提案       |
+| Action | `/todos/:id/suggest-ai` | 詳細ページ向けAI提案           |
+| Action | `/todos/ai/prioritize`  | 一覧ページ向けAI優先度スコア   |
 
 ## 📁 ディレクトリ構成（概要）
 
@@ -112,9 +115,9 @@ app/
 ├── features/          # 機能別UIロジック（components, hooks）
 ├── root.tsx           # アプリのエントリーポイント
 ├── routes/            # 各ページのルート・loader・action
-├── routes.ts          # ページルーティング定義（useNavigate等で使用）
+├── routes.ts          # React Router のルートツリー定義
 ├── schemas/           # Zodによるスキーマ定義
-├── server/            # サーバー側処理（mock APIなど）
+├── server/            # サーバー側I/Oとドメイン操作
 ├── setup-tests.ts     # テスト環境セットアップ（jest-domのimportなど）
 ├── types/             # 共通型定義（taskなど）
 └── utils/             # ユーティリティ関数（format, route-label等）
@@ -129,14 +132,17 @@ Storybookで独立して開発された、再利用性の高いプレゼンテ�
 ```
 stories/
 ├── button
+├── checkbox
+├── filter-select
 ├── input
-├── select
-├── textarea
-├── modal
-├── toast
 ├── loading
+├── modal
+├── select
 ├── status-label
-└── suspense
+├── summary-card
+├── suspense
+├── textarea
+└── toast
 ```
 
 ## 🏗️ アーキテクチャ
@@ -162,6 +168,15 @@ stories/
 git clone https://github.com/your-name/todo-app.git
 cd todo-app
 npm install
+```
+
+環境変数を設定:
+
+```bash
+OPENAI_API_KEY=your_api_key
+```
+
+```bash
 npm run dev
 ```
 
@@ -201,7 +216,7 @@ npx eslint .
   バックエンドのように `Response` を返す構造。
 
 - **🧩 サーバーロジックの分離**
-  `app/server/` にビジネスロジックを集約。
+  `app/server/`（外部I/O）と `app/services/`（業務ロジック）に分離。
 
 - **🖼️ UIは表示に専念**
   ロジックを持たない、再利用可能なコンポーネント。
@@ -248,8 +263,8 @@ MantineなどのUIフレームワークを使うことで開発効率は上が�
   専用のエラー画面を表示します
 - 404（Todo not found）の場合は、一覧画面へ戻る導線を提供します
 - 一覧ページでは、システムエラー用のシンプルなフォールバック UI を表示します
-- レイアウト用ルートでは、データ取得や副作用を持たないため、
-  専用の Error Boundary は定義していません
+- `/todos` のレイアウトルートにはヘッダー状態を導出する軽量な `loader` がありますが、
+  専用の Error Boundary は定義せず root boundary を利用します
 
 <img src="./images/error-404-todo-detail.png" width="500" />
 
@@ -258,8 +273,8 @@ MantineなどのUIフレームワークを使うことで開発効率は上が�
 1. ユーザーが新しいTodoを作成
 2. `action` がPOSTリクエストを受信
 3. `create-task.ts` を実行
-4. 成功時 → `/todos/:id` にリダイレクト
-5. 失敗時 → 構造化されたエラーをUIに返す
+4. 成功時 → `/todos/:id?created=true` にリダイレクト（AI提案を保存した場合は `?created=true&ai=true`）
+5. 失敗時 → 構造化された action エラーデータ（`{ error: string }`）をUIに返す
 
 ## ✍️ 学んだこと
 
