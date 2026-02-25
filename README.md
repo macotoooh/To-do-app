@@ -99,11 +99,14 @@ that API keys are never exposed to the client.
 
 ## 🗺️ Routing
 
-| Page        | Path         |
-| ----------- | ------------ |
-| Todo List   | `/todos`     |
-| Todo Detail | `/todos/:id` |
-| Create Todo | `/todos/new` |
+| Type   | Path                 | Purpose                              |
+| ------ | -------------------- | ------------------------------------ |
+| Page   | `/todos`             | Todo list page                       |
+| Page   | `/todos/:id`         | Todo detail page                     |
+| Page   | `/todos/new`         | Todo create page                     |
+| Action | `/todos/new/suggest-ai` | AI suggestions for create page    |
+| Action | `/todos/:id/suggest-ai` | AI suggestions for detail page    |
+| Action | `/todos/ai/prioritize`  | AI priority scoring for list page |
 
 ## 📁 Project Structure
 
@@ -114,9 +117,9 @@ app/
 ├── features/          # Feature-scoped UI logic (components, hooks)
 ├── root.tsx           # Application entry point
 ├── routes/            # Page routes with loader/action logic
-├── routes.ts          # Route path definitions for use in navigation
+├── routes.ts          # React Router route tree definition
 ├── schemas/           # Zod validation schemas
-├── server/            # Mock server-side business logic
+├── server/            # Server-side I/O and domain operations
 ├── setup-tests.ts     # Test setup (e.g. importing jest-dom)
 ├── types/             # Shared TypeScript types (e.g. task types)
 └── utils/             # Utility functions (formatting, route labels, etc.)
@@ -131,14 +134,17 @@ A set of reusable and purely presentational components developed with Storybook.
 ```bash
 stories/
 ├── button
+├── checkbox
+├── filter-select
 ├── input
-├── select
-├── textarea
-├── modal
-├── toast
 ├── loading
+├── modal
+├── select
 ├── status-label
-└── suspense
+├── summary-card
+├── suspense
+├── textarea
+└── toast
 ```
 
 ### Design Policy
@@ -151,8 +157,12 @@ stories/
 
 ```bash
 utils/
+├── errors.ts              # Preserve Response errors / normalize unknown errors to 500
+├── form.ts                # FormData parsing helpers
 ├── format-date.ts         # Format timestamps
-├── task-status.ts         # Helpers for task status labels
+├── route-labels.ts        # Header labels by route path
+├── sort.ts                # Sort option guards/helpers
+├── task-status.ts         # Helpers for task status values
 ├── test-router-args.ts    # Test helpers for routing
 └── *.test.ts              # Unit tests for utilities
 ```
@@ -162,7 +172,7 @@ utils/
 This app adopts **React Router’s Data Router model**, clearly separating:
 
 - 📡 Routing logic (`loader` / `action`)
-- 🧠 Business logic (`server/`)
+- 🧠 Business logic (`server/`, `services/`)
 - 🖼️ UI logic and presentation (`features/`, `stories/`)
 
 ## 📐 Architecture & Project Structure
@@ -182,6 +192,15 @@ In addition, the relationships between configuration files used by TypeScript, E
 git clone https://github.com/your-name/todo-app.git
 cd todo-app
 npm install
+```
+
+Set environment variables:
+
+```bash
+OPENAI_API_KEY=your_api_key
+```
+
+```bash
 npm run dev
 ```
 
@@ -220,7 +239,7 @@ npx eslint .
   `loader` / `action` return data or `Response` objects, similar to backend endpoints.
 
 - **🧩 Server Logic Isolation**
-  Business logic is placed in `app/server/` for clean separation.
+  Business logic is separated across `app/server/` (external I/O) and `app/services/` (domain/application logic) for clean separation.
 
 - **🖼️ Presentation-Only UI**
   Reusable UI components don't include business logic or state management.
@@ -269,8 +288,8 @@ This approach improves user experience by avoiding unnecessary page transitions.
 - In the case of `404` (e.g. _Todo not found_), a clear navigation path
   back to the list page is provided
 - List pages use a generic fallback UI for system-level failures
-- Layout routes do not define custom error boundaries,
-  as they do not perform data fetching or side effects
+- The `/todos` layout route has a lightweight `loader` for header state derivation,
+  but does not define its own error boundary and relies on the root boundary
 
 <img src="./docs/images/error-404-todo-detail.png" width="500" />
 
@@ -279,8 +298,8 @@ This approach improves user experience by avoiding unnecessary page transitions.
 1. User submits the todo creation form
 2. `action` handles the POST request
 3. Calls `create-task.ts` (server logic)
-4. On success → Redirects to `/todos/:id`
-5. On failure → Returns structured validation errors to the UI
+4. On success → Redirects to `/todos/:id?created=true` (or `?created=true&ai=true` when AI suggestions are saved)
+5. On failure → Returns structured action error data (`{ error: string }`) to the UI
 
 ## ✍️ What I Learned
 
